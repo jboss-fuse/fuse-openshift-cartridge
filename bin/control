@@ -1,0 +1,48 @@
+#!/bin/bash
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+function start() {
+    client_result "Starting DIY cart"
+    source $OPENSHIFT_REPO_DIR/.openshift/action_hooks/start
+}
+
+function stop() {
+    client_result "Stopping DIY cart"
+    source $OPENSHIFT_REPO_DIR/.openshift/action_hooks/stop
+}
+
+function restart() {
+    client_result "Restarting DIY cart"
+    stop
+    start
+}
+
+function status() {
+   if output=$(curl http://$OPENSHIFT_DIY_IP:$OPENSHIFT_DIY_PORT 2>&1 )
+   then
+      client_result "Application is running"
+   else
+      client_result "Application is either stopped or inaccessible"
+   fi
+}
+
+function reload() {
+    client_result "Reloading DIY cart"
+    restart
+}
+
+function tidy() {
+  client_message "Emptying log dir: $OPENSHIFT_DIY_LOG_DIR"
+  shopt -s dotglob
+  rm -rf $OPENSHIFT_DIY_LOG_DIR/*
+}
+
+case "$1" in
+  start)     start ;;
+  stop)      stop ;;
+  restart)   restart ;;
+  status)    status ;;
+  reload)    reload ;;
+  tidy)      tidy ;;
+  *)         exit 0
+esac
