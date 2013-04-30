@@ -4,7 +4,7 @@
 Name: openshift-origin-cartridge-fuse
 Version: 0.3.1
 Release: 1%{?dist}
-Summary: DIY cartridge
+Summary: FUSE cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
@@ -16,7 +16,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 
 %description
-DIY cartridge for openshift. (Cartridge Format V2)
+FUSE cartridge for openshift. (Cartridge Format V2)
 
 
 %prep
@@ -78,7 +78,7 @@ rm -rf %{buildroot}
   (calfonso@redhat.com)
 
 * Mon Apr 15 2013 Adam Miller <admiller@redhat.com> 0.2.6-1
-- Bug 952041 - Add support for tidy to DIY and PHP cartridges
+- Bug 952041 - Add support for tidy to FUSE and PHP cartridges
   (jhonce@redhat.com)
 - V2 action hook cleanup (ironcladlou@gmail.com)
 
@@ -99,7 +99,7 @@ rm -rf %{buildroot}
 - Anchor locked_files.txt entries at the cart directory (ironcladlou@gmail.com)
 - Merge pull request #1976 from calfonso/master (dmcphers@redhat.com)
 - Merge pull request #1974 from brenton/v2_post2 (dmcphers@redhat.com)
-- Bug fixes for DIY v2 cart -947010 (calfonso@redhat.com)
+- Bug fixes for FUSE v2 cart -947010 (calfonso@redhat.com)
 - Registering/installing the cartridges in the rpm %%post (bleanhar@redhat.com)
 
 * Tue Apr 09 2013 Adam Miller <admiller@redhat.com> 0.2.2-1
@@ -109,15 +109,15 @@ rm -rf %{buildroot}
 - bump_minor_versions for sprint 26 (admiller@redhat.com)
 
 * Mon Mar 25 2013 Adam Miller <admiller@redhat.com> 0.1.6-1
-- Cron and DIY v2 cartridge fixes (calfonso@redhat.com)
+- Cron and FUSE v2 cartridge fixes (calfonso@redhat.com)
 - Cron cartridge 2.0 (calfonso@redhat.com)
-- DIY Cartridge conformity to vendor-name (calfonso@redhat.com)
+- FUSE Cartridge conformity to vendor-name (calfonso@redhat.com)
 
 * Thu Mar 21 2013 Adam Miller <admiller@redhat.com> 0.1.5-1
 - Change V2 manifest Version elements to strings (pmorie@gmail.com)
 
 * Mon Mar 18 2013 Adam Miller <admiller@redhat.com> 0.1.4-1
-- Fixing DIY cart git repo creation (chris@@hoflabs.com)
+- Fixing FUSE cart git repo creation (chris@@hoflabs.com)
 
 * Fri Mar 15 2013 Dan McPherson <dmcphers@redhat.com> 0.1.3-1
 - new package built with tito

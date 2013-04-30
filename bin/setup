@@ -5,12 +5,16 @@ case "$1" in
     version="$2"
 esac
 
-echo "$version" > "$OPENSHIFT_DIY_DIR/env/OPENSHIFT_DIY_VERSION"
+echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
 
 # Copy the version specific files into diy directory
 shopt -s dotglob
-cp -r $OPENSHIFT_DIY_DIR/versions/$version/configuration/* $OPENSHIFT_DIY_DIR/configuration
-cp -r $OPENSHIFT_DIY_DIR/versions/$version/template/* $OPENSHIFT_DIY_DIR/template
-
-# Create additional directories required by the diy cartridge
-mkdir -p $OPENSHIFT_DIY_DIR/{logs,run}
+mkdir -p container
+cd container
+curl --write-out %{http_code} --silent --output fuse-fabric-7.2.0.redhat-024.zip http://repo1.maven.org/maven2/org/fusesource/fabric/fuse-fabric/7.2.0.redhat-024/fuse-fabric-7.2.0.redhat-024.zip
+unzip fuse-fabric-7.2.0.redhat-024.zip
+mv fuse-fabric-7.2.0.redhat-024/* .
+rm -rf fuse-fabric-7.2.0.redhat-024
+cp -r $OPENSHIFT_FUSE_DIR/versions/$version/etc/* etc/
+cp -r $OPENSHIFT_FUSE_DIR/versions/$version/bin/* bin/
+#cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/template
