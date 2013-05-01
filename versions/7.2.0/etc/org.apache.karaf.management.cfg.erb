@@ -24,17 +24,17 @@
 #
 # Port number for RMI registry connection
 #
-rmiRegistryPort = ${OPENSHIFT_FUSE_RMI_REGISTRY_PORT}
+rmiRegistryPort = <%= ENV['OPENSHIFT_FUSE_RMI_REGISTRY_PORT'] %>
 
 #
 # Host for RMI registry
 #
-rmiRegistryHost = ${OPENSHIFT_FUSE_IP}
+rmiRegistryHost = <%= ENV['OPENSHIFT_FUSE_IP'] %>
 
 #
 # Port number for RMI server connection
 #
-rmiServerPort = ${OPENSHIFT_RMI_SERVER_PORT}
+rmiServerPort = <%= ENV['OPENSHIFT_FUSE_RMI_SERVER_PORT'] %>
 
 #
 # Name of the JAAS realm used for authentication
@@ -44,7 +44,7 @@ jmxRealm = karaf
 #
 # The service URL for the JMXConnectorServer
 #
-serviceUrl = service:jmx:rmi://0.0.0.0:${rmiServerPort}/jndi/rmi://${rmiRegistryHost}:${rmiRegistryPort}/karaf-${karaf.name}
+serviceUrl = service:jmx:rmi://${rmiRegistryPort}:${rmiServerPort}/jndi/rmi://${rmiRegistryHost}:${rmiRegistryPort}/karaf-${karaf.name}
 
 #
 # Whether any threads started for the JMXConnectorServer should be started as daemon threads

@@ -24,8 +24,8 @@
 #
 # Via sshPort and sshHost you define the address you can login into Karaf.
 #
-sshPort=${OPENSHIFT_FUSE_SSH_PORT}
-sshHost=${OPENSHIFT_FUSE_IP}
+sshPort=<%= ENV['OPENSHIFT_FUSE_SSH_PORT'] %>
+sshHost=<%= ENV['OPENSHIFT_FUSE_IP'] %>
 
 #
 # The sshIdleTimeout defines the inactivity timeout to logout the SSH session.

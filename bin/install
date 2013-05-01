@@ -3,15 +3,10 @@
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 #Download and extract the Fuse Fabric Distribution
-cd $OPENSHIFT_FUSE_DIR
-curl --write-out %{http_code} --silent --output fuse-fabric-7.2.0.redhat-024.zip http://repo1.maven.org/maven2/org/fusesource/fabric/fuse-fabric/7.2.0.redhat-024/fuse-fabric-7.2.0.redhat-024.zip
-unzip fuse-fabric-7.2.0.redhat-024.zip
-mv fuse-fabric-7.2.0.redhat-024/* .
-rm -rf fuse-fabric-7.2.0.redhat-024
 
 # generate password and setup env vars
 echo 'Generating username and password'
 
-password=$(generate_password)
+#password=$(generate_password)
 
-echo "admin=$password,admin" > $OPENSHIFT_FUSE_DIR/etc/users.properties
+#echo "admin=$password,admin" > $OPENSHIFT_FUSE_DIR/etc/users.properties

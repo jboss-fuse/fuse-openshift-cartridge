@@ -9,12 +9,13 @@ echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
 
 # Copy the version specific files into diy directory
 shopt -s dotglob
-mkdir -p container
-cd container
+mkdir -p $OPENSHIFT_FUSE_DIR
+cd $OPENSHIFT_FUSE_DIR
 curl --write-out %{http_code} --silent --output fuse-fabric-7.2.0.redhat-024.zip http://repo1.maven.org/maven2/org/fusesource/fabric/fuse-fabric/7.2.0.redhat-024/fuse-fabric-7.2.0.redhat-024.zip
-unzip fuse-fabric-7.2.0.redhat-024.zip
-mv fuse-fabric-7.2.0.redhat-024/* .
-rm -rf fuse-fabric-7.2.0.redhat-024
-cp -r $OPENSHIFT_FUSE_DIR/versions/$version/etc/* etc/
-cp -r $OPENSHIFT_FUSE_DIR/versions/$version/bin/* bin/
+unzip fuse-fabric-7.2.0.redhat-024.zip 
+ln -s fuse-fabric-7.2.0.redhat-024 container
+erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.management.cfg.erb > container/etc/org.apache.karaf.management.cfg
+erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.shell.cfg.erb > container/etc/org.apache.karaf.shell.cfg
+erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.ops4j.pax.web.cfg.erb > container/etc/org.ops4j.pax.web.cfg
+cp -r $OPENSHIFT_FUSE_DIR/versions/$version/bin/* container/bin/
 #cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/template

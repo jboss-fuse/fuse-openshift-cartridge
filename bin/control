@@ -5,15 +5,13 @@ FUSE_BIN_DIR=${OPENSHIFT_FUSE_DIR}/container/bin
 FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
 
 function start() {
-    client_result "Starting FUSE cart"
     ${FUSE_BIN_DIR}/start
-    #source $OPENSHIFT_REPO_DIR/.openshift/action_hooks/start
+    client_result "Starting FUSE cart: ${FUSE_BIN_DIR}/start"
 }
 
 function stop() {
-    client_result "Stopping FUSE cart"
     ${FUSE_BIN_DIR}/stop
-    #source $OPENSHIFT_REPO_DIR/.openshift/action_hooks/stop
+    client_result "Stopping FUSE cart: ${FUSE_BIN_DIR}/stop"
 }
 
 function restart() {
