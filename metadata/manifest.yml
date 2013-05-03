@@ -46,7 +46,7 @@ Cart-Data:
     Type: environment
     Description: "Unique ID which identified the gear. This value changes between gears."
 Provides:
-  - fuse-0.1
+  - fuse-7.2.0
   - fuse
 Publishes:
   publish-http-url:
@@ -69,22 +69,25 @@ Group-Overrides:
 Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: HTTP_PORT
-    Private-Port:      8080
+    Private-Port:      8181
     Public-Port-Name:  PROXY_PORT
     Mappings:
       - Frontend:      ""
         Backend:       ""
-        Options:       { websocket: true }
   - Private-IP-Name:   IP
     Private-Port-Name: SSH_PORT
     Private-Port:      8101
+    Public-Port-Name:  PROXY_SSH_PORT
   - Private-IP-Name:   IP
     Private-Port-Name: RMI_SERVER_PORT
     Private-Port:      44444
+    Public-Port-Name:  PROXY_RMI_SERVER_PORT
   - Private-IP-Name:   IP
     Private-Port-Name: RMI_REGISTRY_PORT
     Private-Port:      1099
+    Public-Port-Name:  PROXY_RMI_REGISTRY_PORT
   - Private-IP-Name:   IP
     Private-Port-Name: ZOOKEEPER_PORT
     Private-Port:      2181
+    Public-Port-Name:  PROXY_ZOOKEEPER_PORT
 Install-Build-Required: false

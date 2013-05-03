@@ -17,5 +17,7 @@ ln -s fuse-fabric-7.2.0.redhat-024 container
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.management.cfg.erb > container/etc/org.apache.karaf.management.cfg
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.shell.cfg.erb > container/etc/org.apache.karaf.shell.cfg
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.ops4j.pax.web.cfg.erb > container/etc/org.ops4j.pax.web.cfg
+erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/jetty.xml.erb > container/etc/jetty.xml
+cp $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.features.cfg  container/etc/
 cp -r $OPENSHIFT_FUSE_DIR/versions/$version/bin/* container/bin/
 #cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/template
