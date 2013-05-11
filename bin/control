@@ -6,23 +6,21 @@ FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
 
 function start() {
     ${FUSE_BIN_DIR}/start
-    client_result "Starting FUSE cart: ${FUSE_BIN_DIR}/start"
+    client_result "Starting FUSE cart"
 }
 
 function stop() {
     ${FUSE_BIN_DIR}/stop
-    client_result "Stopping FUSE cart: ${FUSE_BIN_DIR}/stop"
+    client_result "Stopping FUSE cart"
 }
 
 function restart() {
-    client_result "Restarting FUSE cart"
     stop
     start
 }
 
 function status() {
-   PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F "=" '{print $2}'`
-   if [ "$PID" = "" ]; then
+   if is_running; then
       client_result "Application is running"
    else
       client_result "Application is either stopped or inaccessible"
@@ -30,7 +28,7 @@ function status() {
 }
 
 function reload() {
-    client_result "Reloading FUSE cart"
+    client_message "Reloading FUSE cart"
     restart
 }
 
@@ -40,7 +38,26 @@ function tidy() {
   rm -rf $OPENSHIFT_FUSE_LOG_DIR/*
 }
 
+function is_running() {
+   PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F "=" '{print $2}'`
+   if [ "$PID" = "" ]; then
+      return 0
+   else
+      return 1
+   fi
+}
+
+function deploy() {
+  fabric_shell "fabric:import ${OPENSHIFT_REPO_DIR}/.openshift/config/profiles"
+}
+
+function fabric_shell() {
+ client_message "Connnecting to Fuse shell using: ${REGISTRY_PASSWORD}"
+ ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${REGISTRY_PASSWORD} $*
+}
+
 case "$1" in
+  deploy)    deploy ;;
   start)     start ;;
   stop)      stop ;;
   restart)   restart ;;

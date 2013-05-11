@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Start the application httpd instance
+
+# Exit on any errors
+set -e
+
+# Get gear ip address.
+gip=$(facter ipaddress)
+
+#
+# Publish this gear's ZooKeeper URL/endpoint.
+#
+if [ -z "$ZOOKEEPR_URL" ]
+then
+    client_error "Jenkins server does not exist!  Please create with rhc app create -t jenkins-1.4"
+    exit 151
+fi
+
+echo "${OPENSHIFT_GEAR_DNS}|${gip}:${OPENSHIFT_FUSE_PROXY_ZOOKEEPER_PORT}"

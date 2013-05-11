@@ -1,13 +1,13 @@
 Name: fuse
-Cartridge-Short-Name: Fuse
-Display-Name: JBoss Fuse 7.2.0
-Description: "Runs JBoss Fuse on OpenShift."
+Cartridge-Short-Name: FUSE
+Display-Name: Fuse Registry 7.2.0
+Description: "Runs a Fuse Fabric container on OpenShift."
 Version: '7.2.0'
 Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/master.zip
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
 Cartridge-Version: 0.0.1
-Cartridge-Vendor: redhat
+Cartridge-Vendor: fusesource
 Vendor: redhat
 Categories:
   - web_framework
@@ -50,17 +50,7 @@ Provides:
   - fuse-7.2.0
   - fuse
 Publishes:
-  publish-http-url:
-    Type: "NET_TCP:httpd-proxy-info"
-  publish-gear-endpoint:
-    Type: "NET_TCP:gear-endpoint-info"
 Subscribes:
-  set-db-connection-info:
-    Type: "NET_TCP:db:connection-info"
-    Required: false
-  set-nosql-db-connection-info:
-    Type: "NET_TCP:nosqldb:connection-info"
-    Required: false
 Scaling:
   Min: 1
   Max: 1
@@ -87,8 +77,4 @@ Endpoints:
     Private-Port-Name: RMI_REGISTRY_PORT
     Private-Port:      1099
     Public-Port-Name:  PROXY_RMI_REGISTRY_PORT
-  - Private-IP-Name:   IP
-    Private-Port-Name: ZOOKEEPER_PORT
-    Private-Port:      2181
-    Public-Port-Name:  PROXY_ZOOKEEPER_PORT
 Install-Build-Required: false

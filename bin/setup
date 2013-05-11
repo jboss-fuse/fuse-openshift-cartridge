@@ -1,23 +1,44 @@
 #!/bin/bash -eu
 
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+function install_fabric() {
+    mkdir -p $OPENSHIFT_FUSE_DIR
+    cd $OPENSHIFT_FUSE_DIR
+    curl --write-out %{http_code} --silent --output fuse-fabric-7.2.0.redhat-024.zip http://repo1.maven.org/maven2/org/fusesource/fabric/fuse-fabric/7.2.0.redhat-024/fuse-fabric-7.2.0.redhat-024.zip
+    unzip fuse-fabric-7.2.0.redhat-024.zip
+    ln -s fuse-fabric-7.2.0.redhat-024 container
+}
+
 case "$1" in
   -v|--version)
     version="$2"
 esac
 
 echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
+#Download and extract the Fuse Fabric Distribution
+install_fabric
+
+# generate password and setup env vars
+echo 'Generating username and password'
+password=$(generate_password)
 
 # Copy the version specific files into diy directory
 shopt -s dotglob
-mkdir -p $OPENSHIFT_FUSE_DIR
 cd $OPENSHIFT_FUSE_DIR
-curl --write-out %{http_code} --silent --output fuse-fabric-7.2.0.redhat-024.zip http://repo1.maven.org/maven2/org/fusesource/fabric/fuse-fabric/7.2.0.redhat-024/fuse-fabric-7.2.0.redhat-024.zip
-unzip fuse-fabric-7.2.0.redhat-024.zip 
-ln -s fuse-fabric-7.2.0.redhat-024 container
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.management.cfg.erb > container/etc/org.apache.karaf.management.cfg
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.shell.cfg.erb > container/etc/org.apache.karaf.shell.cfg
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.ops4j.pax.web.cfg.erb > container/etc/org.ops4j.pax.web.cfg
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/jetty.xml.erb > container/etc/jetty.xml
-cp $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.features.cfg  container/etc/
+erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/system.properties.erb > container/etc/system.properties
 cp -r $OPENSHIFT_FUSE_DIR/versions/$version/bin/* container/bin/
-#cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/template
+cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/template
+echo "admin=$password,admin" > container/etc/users.properties
+echo "$password" > container/etc/passwd
+
+client_result ""
+client_result "Fuse created successfully.  Please make note of these credentials:"
+client_result ""
+client_result "   User: admin"
+client_result "   Password: $password"
+client_result ""
