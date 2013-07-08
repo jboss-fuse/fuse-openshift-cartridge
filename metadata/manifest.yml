@@ -68,13 +68,10 @@ Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: SSH_PORT
     Private-Port:      8101
-    Public-Port-Name:  PROXY_SSH_PORT
   - Private-IP-Name:   IP
     Private-Port-Name: RMI_SERVER_PORT
     Private-Port:      44444
-    Public-Port-Name:  PROXY_RMI_SERVER_PORT
   - Private-IP-Name:   IP
     Private-Port-Name: RMI_REGISTRY_PORT
     Private-Port:      1099
-    Public-Port-Name:  PROXY_RMI_REGISTRY_PORT
 Install-Build-Required: false
