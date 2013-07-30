@@ -1,8 +1,8 @@
 Name: fuse
 Cartridge-Short-Name: FUSE
-Display-Name: Fuse Registry 7.2.0
+Display-Name: Fuse Registry 7.3.0
 Description: "Runs a Fuse Fabric container on OpenShift."
-Version: '7.2.0'
+Version: '7.3.0'
 Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/master.zip
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
@@ -25,10 +25,10 @@ Cart-Data:
   - Key: OPENSHIFT_REPO_DIR
     Type: environemnt
     Description: "Application root directory where application files reside. This directory is reset every time you do a git-push"
-  - Key: OPENSHIFT_INTERNAL_PORT
+  - Key: OPENSHIFT_FUSE_PORT
     Type: environment
     Description: "Internal port to which the web-framework binds to."
-  - Key: OPENSHIFT_INTERNAL_IP
+  - Key: OPENSHIFT_FUSE_IP
     Type: environment
     Description: "Internal IP to which the web-framework binds to."
   - Key: OPENSHIFT_APP_DNS
@@ -47,7 +47,7 @@ Cart-Data:
     Type: environment
     Description: "Unique ID which identified the gear. This value changes between gears."
 Provides:
-  - fuse-7.2.0
+  - fuse-7.3.0
   - fuse
 Publishes:
 Subscribes:
@@ -60,18 +60,18 @@ Group-Overrides:
 Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: HTTP_PORT
-    Private-Port:      8181
+    Private-Port:      8080
     Public-Port-Name:  PROXY_PORT
     Mappings:
       - Frontend:      ""
         Backend:       ""
   - Private-IP-Name:   IP
     Private-Port-Name: SSH_PORT
-    Private-Port:      8101
+    Private-Port:      23101
   - Private-IP-Name:   IP
     Private-Port-Name: RMI_SERVER_PORT
     Private-Port:      44444
   - Private-IP-Name:   IP
     Private-Port-Name: RMI_REGISTRY_PORT
-    Private-Port:      1099
+    Private-Port:      16099
 Install-Build-Required: false
