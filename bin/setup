@@ -33,6 +33,12 @@ erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/jetty.xml.erb > container/etc/jett
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/system.properties.erb > container/etc/system.properties
 cp -r $OPENSHIFT_FUSE_DIR/versions/$version/bin/* container/bin/
 cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/template
+
+
+#Append shutdown configuration
+echo "karaf.shutdown.host=${OPENSHIFT_FUSE_IP}" >> container/etc/config.properties
+echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/config.properties
+
 #Limit the maximum number of created threads
 echo "felix.threading.timeout=0" >> container/etc/config.properties
 echo "admin=$password,admin" > container/etc/users.properties

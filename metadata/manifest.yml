@@ -66,6 +66,9 @@ Endpoints:
       - Frontend:      ""
         Backend:       ""
   - Private-IP-Name:   IP
+    Private-Port-Name: SHUTDOWN_PORT
+    Private-Port:      15001
+  - Private-IP-Name:   IP
     Private-Port-Name: SSH_PORT
     Private-Port:      23101
   - Private-IP-Name:   IP
