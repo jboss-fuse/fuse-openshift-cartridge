@@ -6,17 +6,30 @@ FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
 
 function start() {
     ${FUSE_BIN_DIR}/start
-    client_result "Starting FUSE cart"
+    client_result "Started Fuse cart"
 }
 
 function stop() {
+    PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
     ${FUSE_BIN_DIR}/stop
-    client_result "Stopping FUSE cart"
+    for i in {1..10};
+        do
+            if ps -p $PID > /dev/null; then
+                echo "Fabric has been successfully stopped"
+                break
+            else
+                sleep 3
+            fi
+        done
+    client_result "Stopped Fuse cart"
 }
 
 function restart() {
-    stop
+    if is_running; then
+        stop
+    fi
     start
+    fabric_join
 }
 
 function status() {
@@ -28,7 +41,7 @@ function status() {
 }
 
 function reload() {
-    client_message "Reloading FUSE cart"
+    client_message "Reloading Fuse cart"
     restart
 }
 
@@ -39,7 +52,7 @@ function tidy() {
 }
 
 function is_running() {
-   PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F "=" '{print $2}'`
+   PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
    if [ "$PID" = "" ]; then
       return 0
    else
@@ -51,9 +64,17 @@ function deploy() {
   fabric_shell "fabric:import ${OPENSHIFT_REPO_DIR}/.openshift/config/profiles"
 }
 
-function fabric_shell() {
- client_message "Connnecting to Fuse shell using: ${REGISTRY_PASSWORD}"
- ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${REGISTRY_PASSWORD} $*
+function fabric_join() {
+    FABRIC_CHECKER="${OPENSHIFT_FUSE_DIR}/container/etc/fabric-configured"
+    if [  -f $FABRIC_CHECKER ]; then
+      client_message "Fabirc is already configured"
+    elif [ ! -z $ZOOKEEPER_URL ]; then
+        PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
+        PASSWORD=`cat $PASSWD_FILE`
+        ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${PASSWORD} "wait-for-service org.fusesource.fabric.boot.commands.service.Join"
+        ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${PASSWORD} "fabric:join -f --zookeeper-password ${REGISTRY_PASSWORD} ${ZOOKEEPER_URL}"
+        echo "true" > $FABRIC_CHECKER
+    fi
 }
 
 case "$1" in
