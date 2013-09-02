@@ -12,7 +12,7 @@ function start() {
 
 function stop() {
     PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
-    kill $PID
+    ${FUSE_BIN_DIR}/stop
     for i in {1..20};
         do
             if ps -p $PID > /dev/null; then
