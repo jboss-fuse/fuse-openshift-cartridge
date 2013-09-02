@@ -110,7 +110,7 @@ function fabric_join() {
         PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
         PASSWORD=`cat $PASSWD_FILE`
         ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${PASSWORD} "wait-for-service org.fusesource.fabric.boot.commands.service.Join"
-        ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${PASSWORD} "fabric:join -f --zookeeper-password ${REGISTRY_PASSWORD} ${ZOOKEEPER_URL}"
+        ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${REGISTRY_PASSWORD} ${ZOOKEEPER_URL}"
         echo "true" > $FABRIC_CHECKER
     fi
 }
