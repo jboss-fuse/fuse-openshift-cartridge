@@ -6,6 +6,7 @@ FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
 
 function start() {
     ${FUSE_BIN_DIR}/start
+    wait_for_start    
     client_result "Started Fuse cart"
 }
 
@@ -52,11 +53,48 @@ function tidy() {
 }
 
 function is_running() {
+   #Check if instance file exists
+   if [ ! -f $FUSE_PID_FILE ]; then
+      return 1
+   fi
+
+   #Check if pid exists
    PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
    if [ "$PID" = "" ]; then
+      return 1
+   elif ps -p $PID > /dev/null; then
       return 0
    else
       return 1
+   fi
+}
+
+function wait_for_start() {
+  for i in {1..20};
+     do
+       if [ ! -f $FUSE_PID_FILE ]; then
+         sleep 1
+       else
+         break
+       fi
+     done
+   if [ -f $FUSE_PID_FILE ]; then
+      for j in {1..20};
+         do
+           PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F "=" '{print $2}'`
+           if [ "$PID" = "" ]; then
+             sleep 1
+           else
+            break
+           fi
+     done
+     if ps -p $PID > /dev/null; then
+       client_result "Fabric($PID) is started successfully"
+     else
+       client_error "Command Failed: Fuse process ($PID) is not running"
+     fi
+   else
+    client_error "Command Failed:Could not find Fuse instance.properties"
    fi
 }
 
