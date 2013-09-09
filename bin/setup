@@ -20,8 +20,8 @@ echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
 #Download and extract the Fuse Fabric Distribution
 install_fabric
 
-if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD:-}" ]; then
-  password=$OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD
+if [ ! -z "${ZOOKEEPER_PASSWORD:-}" ]; then
+  password=${ZOOKEEPER_PASSWORD}
 else 
   # generate password and setup env vars
   echo 'Generating username and password'
@@ -51,9 +51,6 @@ echo "$password" > container/etc/passwd
 echo "bind.address=${OPENSHIFT_FUSE_IP}" >> container/etc/system.properties
 echo "publicip=${OPENSHIFT_GEAR_DNS}" >> container/etc/system.properties
 echo "local.resolver=publicip" >> container/etc/system.properties
-
-add_domain_env_var "OPENSHIFT_FUSE_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}"
-add_domain_env_var "OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=$password"
 
 client_result ""
 client_result "Fuse created successfully.  Please make note of these credentials:"
