@@ -20,9 +20,13 @@ echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
 #Download and extract the Fuse Fabric Distribution
 install_fabric
 
-# generate password and setup env vars
-echo 'Generating username and password'
-password=$(generate_password)
+if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD:-}" ]; then
+  password=$OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD
+else 
+  # generate password and setup env vars
+  echo 'Generating username and password'
+  password=$(generate_password)
+fi
 
 # Copy the version specific files into diy directory
 shopt -s dotglob
