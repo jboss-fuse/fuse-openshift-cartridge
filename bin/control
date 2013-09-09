@@ -7,6 +7,7 @@ FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
 function start() {
     ${FUSE_BIN_DIR}/start
     wait_for_start    
+    fabric_join
     client_result "Started Fuse cart"
 }
 
@@ -30,7 +31,6 @@ function restart() {
         stop
     fi
     start
-    fabric_join
 }
 
 function status() {
@@ -106,11 +106,11 @@ function fabric_join() {
     FABRIC_CHECKER="${OPENSHIFT_FUSE_DIR}/container/etc/fabric-configured"
     if [  -f $FABRIC_CHECKER ]; then
       client_message "Fabirc is already configured"
-    elif [ ! -z $ZOOKEEPER_URL ]; then
+    elif [ ! -z $OPENSHIFT_FUSE_ZOOKEEPER_URL ]; then
         PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
         PASSWORD=`cat $PASSWD_FILE`
         ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${PASSWORD} "wait-for-service org.fusesource.fabric.boot.commands.service.Join"
-        ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${REGISTRY_PASSWORD} ${ZOOKEEPER_URL}"
+        ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
         echo "true" > $FABRIC_CHECKER
     fi
 }
