@@ -77,4 +77,9 @@ Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: RMI_REGISTRY_PORT
     Private-Port:      16099
+      - Private-IP-Name:   IP
+    Private-Port-Name: AMQ_PORT
+    Private-Port:      31313
+    Public-Port-Name:  AMQ_PROXY_PORT
+    Options:           { "ssl_to_gear": true }
 Install-Build-Required: false
