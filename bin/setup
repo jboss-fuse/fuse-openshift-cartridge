@@ -49,8 +49,8 @@ echo "felix.threading.timeout=0" >> container/etc/config.properties
 echo "admin=$password,admin" > container/etc/users.properties
 echo "$password" > container/etc/passwd
 echo "bind.address=${OPENSHIFT_FUSE_IP}" >> container/etc/system.properties
-echo "publicip=${OPENSHIFT_GEAR_DNS}" >> container/etc/system.properties
-echo "local.resolver=publicip" >> container/etc/system.properties
+echo "publichostname=${OPENSHIFT_GEAR_DNS}" >> container/etc/system.properties
+echo "local.resolver=publichostname" >> container/etc/system.properties
 
 client_result ""
 client_result "Fuse created successfully.  Please make note of these credentials:"
