@@ -82,4 +82,12 @@ Endpoints:
     Private-Port:      31313
     Public-Port-Name:  AMQ_PROXY_PORT
     Options:           { "ssl_to_gear": true }
+  - Private-IP-Name:   IP
+    Private-Port-Name: ELASTICSEARCH_HTTP_PORT
+    Private-Port:      18080
+    Public-Port-Name:  ELASTICSEARCH_HTTP__PROXY_PORT
+  - Private-IP-Name:   IP
+    Private-Port-Name: ELASTICSEARCH_TCP_PORT
+    Private-Port:      19301
+    Public-Port-Name:  ELASTICSEARCH_TCP__PROXY_PORT
 Install-Build-Required: false
