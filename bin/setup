@@ -11,6 +11,13 @@ function install_fabric() {
     ln -s fuse-fabric-7.3.0.redhat-072 container
 }
 
+function replace_property_value {
+  sed "s/$1.*=.*/$1 = $2/g" $3 > $3.tmp
+  rm $3
+  mv $3.tmp $3
+}
+
+
 case "$1" in
   -v|--version)
     version="$2"
@@ -46,6 +53,7 @@ if [ ! -z "$OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
   echo "zookeeper.url=$OPENSHIFT_FUSE_ZOOKEEPER_URL" >> container/etc/system.properties
   echo "zookeeper.password=$password" >> container/etc/system.properties
   echo "agent.auto.start=true" >> container/etc/system.properties
+  replace_property_value featuresBoot "config,ssh,management,fabric-boot-commands,fabric-bundle,fabric-maven-proxy,process-manager,war,jolokia,fabric-agent" container/etc/org.apache.karaf.features.cfg
   echo "true" > $FABRIC_CHECKER
 fi
 
