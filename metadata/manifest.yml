@@ -86,8 +86,10 @@ Endpoints:
     Private-Port-Name: ES_HTTP_PORT
     Private-Port:      18080
     Public-Port-Name:  ES_HTTP_PROXY_PORT
+    Options:           { "ssl_to_gear": true }
   - Private-IP-Name:   IP
     Private-Port-Name: ES_TCP_PORT
     Private-Port:      19301
     Public-Port-Name:  ES_TCP_PROXY_PORT
+    Options:           { "ssl_to_gear": true }
 Install-Build-Required: false
