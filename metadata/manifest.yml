@@ -85,9 +85,9 @@ Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: ES_HTTP_PORT
     Private-Port:      18080
-    Public-Port-Name:  ES_HTTP__PROXY_PORT
+    Public-Port-Name:  ES_HTTP_PROXY_PORT
   - Private-IP-Name:   IP
     Private-Port-Name: ES_TCP_PORT
     Private-Port:      19301
-    Public-Port-Name:  ES_TCP__PROXY_PORT
+    Public-Port-Name:  ES_TCP_PROXY_PORT
 Install-Build-Required: false
