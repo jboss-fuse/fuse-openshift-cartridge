@@ -3,6 +3,7 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 FUSE_BIN_DIR=${OPENSHIFT_FUSE_DIR}/container/bin
 FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
+FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
 
 function start() {
     ${FUSE_BIN_DIR}/start
@@ -105,7 +106,7 @@ function deploy() {
 function fabric_join() {
     FABRIC_CHECKER="${OPENSHIFT_FUSE_DIR}/container/etc/fabric-configured"
     if [  -f $FABRIC_CHECKER ]; then
-      client_message "Fabirc is already configured"
+      client_message "Fabric is already configured"
     elif [ ! -z $OPENSHIFT_FUSE_ZOOKEEPER_URL ]; then
         PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
         PASSWORD=`cat $PASSWD_FILE`
@@ -113,6 +114,12 @@ function fabric_join() {
         ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password `cat container/etc/passwd` ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
         echo "true" > $FABRIC_CHECKER
     fi
+}
+
+function fabric_shell() {
+ password=`cat ${FUSE_PASSWD_FILE}`
+ client_message "Connnecting to Fuse shell using: ${password}"
+ ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} $*
 }
 
 case "$1" in

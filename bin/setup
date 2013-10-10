@@ -67,11 +67,32 @@ echo "admin=$password,admin" > container/etc/users.properties
 echo "$password" > container/etc/passwd
 echo "bind.address=${OPENSHIFT_FUSE_IP}" >> container/etc/system.properties
 echo "publichostname=${OPENSHIFT_GEAR_DNS}" >> container/etc/system.properties
+echo "global.resolver=publichostname" >> container/etc/system.properties
 echo "local.resolver=publichostname" >> container/etc/system.properties
+
+#Additional changes for the root container
+if [ -z "$OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
+	echo "zookeeper.password=$password" >> container/etc/system.properties
+	echo "zookeeper.server.port=${OPENSHIFT_FUSE_ZOOKEEPER_PORT}" >> container/etc/system.properties
+	echo "zookeeper.server.connection.port=${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}" >> container/etc/system.properties
+	#Temporary fix, till added to fabric by default:
+	echo "org.ops4j.pax.web.listening.addresses=\${zk:\${karaf.name}/bindaddress}" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
+	#Make sure that the default profile contains an openshift-friendly jetty.xml
+	cp container/etc/jetty.xml container/fabric/import/fabric/configs/versions/1.0/profiles/default/
+	echo "org.osgi.service.http.connection.port=80" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
+
+	add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}"
+	add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD=$password"
+	add_domain_env_var "MAVEN_UPLOAD_URL=${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_HTTP_PORT}/maven/upload/"
+fi
 
 client_result ""
 client_result "Fuse created successfully.  Please make note of these credentials:"
 client_result ""
 client_result "   User: admin"
 client_result "   Password: $password"
+if [ -z "$OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
+	client_result "   Zookeeper URL: ${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_REGISTRY_ZOOKEEPER_PROXY_PORT}"
+	client_result "   Zookeeper Password: $password"
+fi	
 client_result ""

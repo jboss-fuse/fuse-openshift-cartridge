@@ -19,6 +19,15 @@ Cart-Data:
   - Key: OPENSHIFT_FUSE_LOG_DIR
     Type: environment
     Description: "Directory to store application log files."
+  - Key: ZOOKEEPER_URL
+    Type: environment
+    Description: "The url to zookeeper."
+  - Key: ZOOKEEPER_PASSWORD
+    Type: environment
+    Description: "The zookeeper password."
+  - Key: MAVEN_UPLOAD_URL
+    Type: environment
+    Description: "The url to the fabric maven proxy."
   - Key: OPENSHIFT_TMP_DIR
     Type: environment
     Description: "Directory to store application temporary files."
@@ -77,6 +86,11 @@ Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: RMI_REGISTRY_PORT
     Private-Port:      16099
+  - Private-IP-Name:   IP
+    Private-Port-Name: ZOOKEEPER_PORT
+    Private-Port:      3128
+    Public-Port-Name:  ZOOKEEPER_PROXY_PORT
+    Options:           { "ssl_to_gear": true }
   - Private-IP-Name:   IP
     Private-Port-Name: AMQ_PORT
     Private-Port:      31313
