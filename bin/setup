@@ -5,10 +5,10 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 function install_fabric() {
     mkdir -p $OPENSHIFT_FUSE_DIR
     cd $OPENSHIFT_FUSE_DIR
-#    curl --write-out %{http_code} --silent --output fuse-fabric-7.3.0.redhat-113.zip http://repo.fusesource.com/nexus/content/groups/ea/org/fusesource/fabric/fuse-fabric/7.3.0.redhat-113/fuse-fabric-7.3.0.redhat-113.zip
-    curl --write-out %{http_code} --silent --output fuse-fabric-7.3.0.redhat-113.zip http://repo.fusesource.com/nexus/content/repositories/jboss-fuse-6.1.x/org/fusesource/fabric/fuse-fabric/7.3.0.redhat-113/fuse-fabric-7.3.0.redhat-113.zip
-    unzip fuse-fabric-7.3.0.redhat-113.zip
-    ln -s fuse-fabric-7.3.0.redhat-113 container
+#    curl --write-out %{http_code} --silent --output fuse-fabric-7.3.0.redhat-114.zip http://repo.fusesource.com/nexus/content/groups/ea/org/fusesource/fabric/fuse-fabric/7.3.0.redhat-114/fuse-fabric-7.3.0.redhat-114.zip
+    curl --write-out %{http_code} --silent --output fuse-fabric-7.3.0.redhat-114.zip http://repo.fusesource.com/nexus/content/repositories/jboss-fuse-6.1.x/org/fusesource/fabric/fuse-fabric/7.3.0.redhat-114/fuse-fabric-7.3.0.redhat-114.zip
+    unzip fuse-fabric-7.3.0.redhat-114.zip
+    ln -s fuse-fabric-7.3.0.redhat-114 container
 }
 
 function replace_property_value {

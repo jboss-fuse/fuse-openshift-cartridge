@@ -256,7 +256,7 @@ setupDefaults() {
     CLASSPATH="$KARAF_HOME/lib/bin/karaf-client.jar"
     CLASSPATH="$CLASSPATH:$KARAF_HOME/system/org/apache/sshd/sshd-core/0.8.0/sshd-core-0.8.0.jar"
     CLASSPATH="$CLASSPATH:$KARAF_HOME/system/org/apache/mina/mina-core/2.0.7/mina-core-2.0.7.jar"
-    CLASSPATH="$CLASSPATH:$KARAF_HOME/system/org/apache/karaf/shell/org.apache.karaf.shell.console/2.3.0.redhat-610113/org.apache.karaf.shell.console-2.3.0.redhat-610113.jar"
+    CLASSPATH="$CLASSPATH:$KARAF_HOME/system/org/apache/karaf/shell/org.apache.karaf.shell.console/2.3.0.redhat-610114/org.apache.karaf.shell.console-2.3.0.redhat-610114.jar"
 
 }
 
