@@ -74,7 +74,7 @@ else
 	echo "ensemble.auto.start=true" >> container/etc/system.properties
 	echo "agent.auto.start=true" >> container/etc/system.properties
 	echo "profiles=hawtio openshift" >> container/etc/system.properties
-	echo "profiles.auto.import.path" >> container/etc/system.properties
+	echo "profiles.auto.import.path=fabric/import/" >> container/etc/system.properties
 	echo "zookeeper.password=$password" >> container/etc/system.properties
 	echo "zookeeper.server.port=${OPENSHIFT_FUSE_ZOOKEEPER_PORT}" >> container/etc/system.properties
 	echo "zookeeper.server.connection.port=${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}" >> container/etc/system.properties
