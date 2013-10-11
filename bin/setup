@@ -48,7 +48,7 @@ cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/templ
 
 
 #Check if we can directly join a fabric
-if [ ! -z "$OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
+if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
   FABRIC_CHECKER="${OPENSHIFT_FUSE_DIR}/container/etc/fabric-configured"
   echo "zookeeper.url=$OPENSHIFT_FUSE_ZOOKEEPER_URL" >> container/etc/system.properties
   echo "zookeeper.password=$password" >> container/etc/system.properties
@@ -71,7 +71,7 @@ echo "global.resolver=publichostname" >> container/etc/system.properties
 echo "local.resolver=publichostname" >> container/etc/system.properties
 
 #Additional changes for the root container
-if [ -z "$OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
+if [ -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
 	echo "zookeeper.password=$password" >> container/etc/system.properties
 	echo "zookeeper.server.port=${OPENSHIFT_FUSE_ZOOKEEPER_PORT}" >> container/etc/system.properties
 	echo "zookeeper.server.connection.port=${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}" >> container/etc/system.properties
@@ -91,8 +91,8 @@ client_result "Fuse created successfully.  Please make note of these credentials
 client_result ""
 client_result "   User: admin"
 client_result "   Password: $password"
-if [ -z "$OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
-	client_result "   Zookeeper URL: ${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_REGISTRY_ZOOKEEPER_PROXY_PORT}"
+if [ -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
+	client_result "   Zookeeper URL: ${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}"
 	client_result "   Zookeeper Password: $password"
 fi	
 client_result ""
