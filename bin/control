@@ -8,7 +8,7 @@ FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
 function start() {
     ${FUSE_BIN_DIR}/start
     wait_for_start    
-    fabric_join
+    #fabric_join
     client_result "Started Fuse cart"
 }
 
