@@ -1,40 +1,42 @@
-# OpenShift Fuse Cartridge
+Running Fuse on OpenShift
+-------------------------
 
-The `diy` cartridge provides a minimal, free-form scaffolding which leaves all
-details of the cartridge to the application developer.
+If you want to try out Fuse on OpenShift here's the current instructions:
 
-## Get started
-1. Add framework of choice to your repo.
-2. Modify `.openshift/action_hooks/start` to start your application.
-   The application is required to bind to `$OPENSHIFT_DIY_IP:$OPENSHIFT_DIY_PORT`.
-3. Modify `.openshift/action_hooks/stop` to stop your application.
-4. Commit and push your changes.
+### 1 Create a Fuse Registry (based on EA 6.1 build of Fuse).
 
-## Repo layout
+If you use the web UI to create an application then enter the cartridge URI of **https://raw.github.com/jboss-fuse/fuse-registry-openshift-cartridge/master/metadata/manifest.yml** in the entry field (at the bottom left of the form).
 
-    static/           Externally exposed static content goes here
-    .openshift/
-      action_hooks/   See the Action Hooks documentation [1]
-        start         Custom action hook used to start your application
-        stop          CUstom action hook to stop your application
+Or if you want to use the [rhc command line](https://www.openshift.com/developers/rhc-client-tools-install) type:
 
-\[1\] [Action Hooks documentation](https://github.com/openshift/origin-server/blob/master/node/README.writing_applications.md#action-hooks)
+    rhc create-app fuse https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/master/metadata/manifest.yml
 
-Note: Please leave the `static` directory in place (alter but do not delete) but feel
-free to create additional directories if needed.
+This will output the generated password for fabric and also the http
+url for hawtio.
 
-Every time you push, everything in your remote repo dir gets recreated.
-Please store long term items (like an sqlite database) in the OpenShift
-data directory, which will persist between pushes of your repo.
-The OpenShift data directory is accessible via `$OPENSHIFT_DATA_DIR`.
+If you prefer to specify your own password (which can be handy in development to reuse the same password across fabrics) try this:
 
-## Environment Variables
+    rhc create-app -e OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=admin fuse https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/master/metadata/manifest.yml
 
-The `diy` cartridge provides the following environment variables to reference for ease
-of use:
+You probably want to use a safer password than 'admin' though ;)
 
-    OPENSHIFT_DIY_IP      The IP address assigned to the application
-    OPENSHIFT_DIY_PORT    The port assigned to the the application
+You can then login to your registry at: **http://fuse-$USERID.rhcloud.com/hawtio/** where $USERID is your openshift account name. Use the following login:
 
-For more information about environment variables, consult the
-[OpenShift Application Author Guide](https://github.com/openshift/origin-server/blob/master/node/README.writing_applications.md).
+```
+user:     admin
+password: $password
+```
+
+### 2 Open the **Fabric** tab and you should be able to see the containers running (only 1 at the moment).
+
+### 3 click on the + icon on the Containers tab to add a new container using the openshift creation form
+
+Enter something like these details:
+
+```
+name:      someContainerName
+serverUrl: openshift.redhat.com
+login:     myname@foo.com
+password:  *********
+domain:    mydomain
+```
