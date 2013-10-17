@@ -20,6 +20,12 @@ If you prefer to specify your own password (which can be handy in development to
 
 You probably want to use a safer password than 'admin' though ;)
 
+If you have a subscription for Openshift that gives you access to other gear sizes, you could run 
+
+    rhc create-app -g medium -e OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=admin fuse https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/master/metadata/manifest.yml
+    
+That will create the container in an Openshift gear of the specified size.
+
 You can then login to your registry at: **http://fuse-$USERID.rhcloud.com/hawtio/** where $USERID is your openshift account name. Use the following login:
 
 ```
