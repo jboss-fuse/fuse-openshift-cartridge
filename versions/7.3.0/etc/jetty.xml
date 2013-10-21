@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//
+DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<Configure class="org.eclipse.jetty.server.Server">
+
+    <!-- =========================================================== -->
+    <!-- Security settings                                           -->
+    <!-- =========================================================== -->
+
+    <Call name="addBean">
+        <Arg>
+            <New class="org.eclipse.jetty.plus.jaas.JAASLoginService">
+                <Set name="name">karaf</Set>
+                <Set name="loginModuleName">karaf</Set>
+                <Set name="roleClassNames">
+                    <Array type="java.lang.String">
+                        <Item>org.apache.karaf.jaas.boot.principal.RolePrincipal</Item>
+                    </Array>
+                </Set>
+            </New>
+        </Arg>
+    </Call>
+</Configure>
