@@ -112,4 +112,8 @@ bind.address=<%= ENV['OPENSHIFT_FUSE_IP'] %>
 publichostname=<%= ENV['OPENSHIFT_GEAR_DNS'] %>
 global.resolver=publichostname
 local.resolver=publichostname
-profile=jboss-fuse-minimal
+profile=jboss-fuse-minimal   
+org.osgi.service.http.connection.port=80
+org.osgi.service.http.port=<%= ENV['OPENSHIFT_FUSE_HTTP_PORT'] %>
+org.ops4j.pax.web.listening.addresses=<%= ENV['OPENSHIFT_FUSE_IP'] %>
+
