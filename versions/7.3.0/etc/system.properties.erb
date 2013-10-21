@@ -108,4 +108,8 @@ webconsole.jms.password=${activemq.jmx.password}
 
 ensemble.auto.start=false
 agent.auto.start=true
+bind.address=<%= ENV['OPENSHIFT_FUSE_IP'] %>
+publichostname=<%= ENV['OPENSHIFT_GEAR_DNS'] %>
+global.resolver=publichostname
+local.resolver=publichostname
 profile=jboss-fuse-minimal

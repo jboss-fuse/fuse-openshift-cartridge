@@ -41,7 +41,6 @@ cd $OPENSHIFT_FUSE_DIR
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.management.cfg.erb > container/etc/org.apache.karaf.management.cfg
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.shell.cfg.erb > container/etc/org.apache.karaf.shell.cfg
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.ops4j.pax.web.cfg.erb > container/etc/org.ops4j.pax.web.cfg
-erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/jetty.xml.erb > container/etc/jetty.xml
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/system.properties.erb > container/etc/system.properties
 cp -r $OPENSHIFT_FUSE_DIR/versions/$version/bin/* container/bin/
 cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/template
@@ -55,36 +54,26 @@ echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/conf
 echo "felix.threading.timeout=0" >> container/etc/config.properties
 echo "admin=$password,admin" > container/etc/users.properties
 echo "$password" > container/etc/passwd
-echo "bind.address=${OPENSHIFT_FUSE_IP}" >> container/etc/system.properties
-echo "publichostname=${OPENSHIFT_GEAR_DNS}" >> container/etc/system.properties
-echo "global.resolver=publichostname" >> container/etc/system.properties
-echo "local.resolver=publichostname" >> container/etc/system.properties
+echo "zookeeper.password=$password" >> container/etc/system.properties
+
 
 # Configure to join an existing fabric
 if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
   FABRIC_CHECKER="${OPENSHIFT_FUSE_DIR}/container/etc/fabric-configured"
   echo "zookeeper.url=$OPENSHIFT_FUSE_ZOOKEEPER_URL" >> container/etc/system.properties
-  echo "zookeeper.password=$password" >> container/etc/system.properties
-  echo "agent.auto.start=true" >> container/etc/system.properties
-  replace_property_value featuresBoot "config,ssh,management,fabric-boot-commands,fabric-bundle,fabric-maven-proxy,process-manager,war,jolokia,fabric-agent" container/etc/org.apache.karaf.features.cfg
-  #Make sure that the default profile contains an openshift-friendly jetty.xml
-  echo "org.osgi.service.http.connection.port=80" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
-
   echo "true" > $FABRIC_CHECKER
 
 # Turn into a fabric root container
 else
 	echo "ensemble.auto.start=true" >> container/etc/system.properties
-	echo "agent.auto.start=true" >> container/etc/system.properties
 	echo "profiles=hawtio openshift" >> container/etc/system.properties
 	echo "profiles.auto.import.path=fabric/import/" >> container/etc/system.properties
-	echo "zookeeper.password=$password" >> container/etc/system.properties
 	echo "zookeeper.server.port=${OPENSHIFT_FUSE_ZOOKEEPER_PORT}" >> container/etc/system.properties
 	echo "zookeeper.server.connection.port=${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}" >> container/etc/system.properties
+
 	#Temporary fix, till added to fabric by default:
 	echo "org.ops4j.pax.web.listening.addresses=\${zk:\${karaf.name}/bindaddress}" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
-	#Make sure that the default profile contains an openshift-friendly jetty.xml
-	cp container/etc/jetty.xml container/fabric/import/fabric/configs/versions/1.0/profiles/default/
+	echo "org.osgi.service.http.port=\${env:OPENSHIFT_FUSE_HTTP_PORT}" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
 	echo "org.osgi.service.http.connection.port=80" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
 
 	add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}"
