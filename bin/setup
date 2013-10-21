@@ -76,6 +76,7 @@ else
 	echo "org.osgi.service.http.port=\${env:OPENSHIFT_FUSE_HTTP_PORT}" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
 	echo "org.osgi.service.http.connection.port=80" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
 	cp container/etc/jetty.xml container/fabric/import/fabric/configs/versions/1.0/profiles/default/
+	cp container/etc/jetty.xml container/etc/
 
 	add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}"
 	add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD=$password"
