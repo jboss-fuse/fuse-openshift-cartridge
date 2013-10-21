@@ -44,7 +44,7 @@ erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.ops4j.pax.web.cfg.erb > contai
 erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/system.properties.erb > container/etc/system.properties
 cp -r $OPENSHIFT_FUSE_DIR/versions/$version/bin/* container/bin/
 cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/template
-cp $OPENSHIFT_FUSE_DIR/versions/$version/etc/jetty.xml > container/etc/jetty.xml
+cp $OPENSHIFT_FUSE_DIR/versions/$version/etc/jetty.xml container/etc/jetty.xml
 
 
 #Append shutdown configuration
