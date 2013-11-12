@@ -47,16 +47,15 @@ cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/templ
 cp $OPENSHIFT_FUSE_DIR/versions/$version/etc/jetty.xml container/etc/jetty.xml
 
 
-#Append shutdown configuration
+# Append shutdown configuration
 echo "karaf.shutdown.host=${OPENSHIFT_FUSE_IP}" >> container/etc/config.properties
 echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/config.properties
-
-#Limit the maximum number of created threads
+# Limit the maximum number of created threads
 echo "felix.threading.timeout=0" >> container/etc/config.properties
+# Store password
 echo "admin=$password,admin" > container/etc/users.properties
 echo "$password" > container/etc/passwd
 echo "zookeeper.password=$password" >> container/etc/system.properties
-
 
 # Configure to join an existing fabric
 if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
