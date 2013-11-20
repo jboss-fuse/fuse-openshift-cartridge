@@ -46,3 +46,13 @@ login:     myname@foo.com
 password:  *********
 domain:    mydomain
 ```
+
+### Using different versions of Fuse
+
+Until we get to 6.1 GA we are doing continuous deployment builds of Fuse 6.1 used by the cartridge.
+
+The [URL for the cartridge](https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/master/metadata/manifest.yml) is really just from the master branch of this github project.
+
+Though we create a branch for every distro of Fuse 6.1 beta; so you can always specify the exact build you want. So you can freeze on a particular build you want.
+
+e.g. here's the [build 169 branch in github](https://github.com/jboss-fuse/fuse-openshift-cartridge/blob/jboss-fuse-6.1.x-169/metadata/manifest.yml) then to get the URL for this just click the [RAW link](https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/jboss-fuse-6.1.x-170/metadata/manifest.yml) to get the URL you can use with OpenShift; either via the website or the **rhc** command line tool.
