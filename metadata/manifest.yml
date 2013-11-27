@@ -1,7 +1,7 @@
 Name: fuse
 Cartridge-Short-Name: FUSE
-Display-Name: Fuse Registry 7.3.0
-Description: "Runs a Fuse Fabric container on OpenShift."
+Display-Name: JBoss Fuse 6.1.0 EA
+Description: "Runs a JBoss Fuse container on OpenShift."
 Version: '7.3.0'
 Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/master.zip
 License: "ASL 2.0"
