@@ -33,7 +33,9 @@ user:     admin
 password: $password
 ```
 
-### 2 Open the **Fabric** tab and you should be able to see the containers running (only 1 at the moment).
+### 2 Open the **Fuse** Console and you should be able to see the containers running (only 1 at the moment).
+
+You can now use the Runtime and Configuration tabs and create containers etc.
 
 ### 3 click on the + icon on the Containers tab to add a new container using the openshift creation form
 
