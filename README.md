@@ -3,7 +3,7 @@ Running Fuse on OpenShift
 
 If you want to try out Fuse on OpenShift here's the current instructions:
 
-### 1 Create a Fuse Registry (based on EA 6.1 build of Fuse).
+### 1 Create the Fuse cartridge (based on EA 6.1 build of JBoss Fuse).
 
 If you use the web UI to create an application then enter the cartridge URI of **https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/master/metadata/manifest.yml** in the entry field (at the bottom left of the form).
 
