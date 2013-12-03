@@ -43,3 +43,15 @@
 # export KARAF_DATA # Karaf data folder
 # export KARAF_BASE # Karaf base folder
 # export KARAF_OPTS # Additional available Karaf options
+export JAVA_MIN_MEM=128M
+export JAVA_PERM_MEM=16M
+export JAVA_MAX_MEM=384M
+export JAVA_MAX_PERM_MEM=64M
+if [ "$OPENSHIFT_GEAR_MEMORY_MB" = "1024" ]; then
+	export JAVA_MAX_MEM=768M
+	export JAVA_MAX_PERM_MEM=128M
+elif [ "$OPENSHIFT_GEAR_MEMORY_MB" = "2048" ]; then
+	export JAVA_MAX_MEM=1536M
+	export JAVA_MAX_PERM_MEM=256M
+fi
+export JAVA_OPTS="-server -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass -Xms$JAVA_MIN_MEM -Xmx$JAVA_MAX_MEM -XX:PermSize=$JAVA_PERM_MEM -XX:MaxPermSize=$JAVA_MAX_PERM_MEM"
