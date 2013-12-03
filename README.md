@@ -5,7 +5,7 @@ If you want to try out Fuse on OpenShift here's the current instructions:
 
 ### 1 Create the Fuse cartridge (based on EA 6.1 build of JBoss Fuse).
 
-The easiest way is to use the <a class="btn btn-primary btn-large" href="https://www.openshift.com/quickstarts/jboss-fuse-61-early-access">Fuse Cartridge Quickstart</a>
+The easiest way is to use the <a class="btn btn-primary" href="https://www.openshift.com/quickstarts/jboss-fuse-61-early-access">Fuse Cartridge Quickstart</a>
 
 If you want to use the [OpenShift create application page](https://openshift.redhat.com/app/console/application_types), enter the cartridge URI of **https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/master/metadata/manifest.yml** in the entry field (at the bottom left of the form).
 
