@@ -97,6 +97,14 @@ Endpoints:
     Public-Port-Name:  AMQ_PROXY_PORT
     Options:           { "ssl_to_gear": true }
   - Private-IP-Name:   IP
+    Private-Port-Name: AMQ_SSL_PORT
+    Private-Port:      31314
+    Public-Port-Name:  AMQ_SSL_PROXY_PORT
+    Protocols: [tls]
+    Mappings:
+    - Frontend: 'TLS_PORT_1'
+      Backend: ''
+  - Private-IP-Name:   IP
     Private-Port-Name: ES_HTTP_PORT
     Private-Port:      18080
     Public-Port-Name:  ES_HTTP_PROXY_PORT
