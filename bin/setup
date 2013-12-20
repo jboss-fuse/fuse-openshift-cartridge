@@ -2,7 +2,7 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-BUILD=redhat-199
+BUILD=redhat-307
 
 function install_fabric() {
     mkdir -p $OPENSHIFT_FUSE_DIR
