@@ -1,3 +1,23 @@
 #!/bin/bash -e
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+# Copy the version specific files into diy directory
+cd $OPENSHIFT_FUSE_DIR/versions/$OPENSHIFT_FUSE_VERSION
+for i in */* ; do
+  if [[ $i == *.erb ]]; then
+    erb $i > $OPENSHIFT_FUSE_DIR/container/${i%.*}
+  else
+    cp $i $OPENSHIFT_FUSE_DIR/container/$i
+  fi
+done
+
+cd $OPENSHIFT_FUSE_DIR
+# Append shutdown configuration
+echo "karaf.shutdown.host=${OPENSHIFT_FUSE_IP}" >> container/etc/config.properties
+echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/config.properties
+# Limit the maximum number of created threads
+echo "felix.threading.timeout=0" >> container/etc/config.properties
+
+
+client_result "Done install"

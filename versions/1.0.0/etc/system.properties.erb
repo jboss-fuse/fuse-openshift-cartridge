@@ -8,7 +8,7 @@ org.ops4j.pax.logging.DefaultServiceLog.level=ERROR
 #
 # Name of this Karaf instance.
 #
-karaf.name=<%= ENV['OPENSHIFT_GEAR_UUID'] %>
+karaf.name=<%= ENV['OPENSHIFT_APP_NAME'] %>
 
 #
 # Default repository where bundles will be loaded from before using
@@ -106,6 +106,18 @@ webconsole.jmx.password=${activemq.jmx.password}
 webconsole.jms.user=${activemq.jmx.user}
 webconsole.jms.password=${activemq.jmx.password}
 
+#
+# Fabric configuration
+#
 ensemble.auto.start=false
 agent.auto.start=true
-profile=jboss-fuse-minimal
+bind.address=<%= ENV['OPENSHIFT_FUSE_IP'] %>
+publichostname=<%= ENV['OPENSHIFT_GEAR_DNS'] %>
+global.resolver=publichostname
+local.resolver=publichostname
+profiles=hawtio openshift
+org.osgi.service.http.connection.port=80
+org.osgi.service.http.port=<%= ENV['OPENSHIFT_FUSE_HTTP_PORT'] %>
+org.ops4j.pax.web.listening.addresses=<%= ENV['OPENSHIFT_FUSE_IP'] %>
+fabric.environment=openshift
+

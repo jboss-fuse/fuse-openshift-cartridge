@@ -2,7 +2,7 @@ Name: fuse
 Cartridge-Short-Name: FUSE
 Display-Name: JBoss Fuse 6.1.0 EA
 Description: "Runs a JBoss Fuse container on OpenShift."
-Version: '7.3.0'
+Version: '1.0.0'
 Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/master.zip
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
@@ -19,10 +19,10 @@ Cart-Data:
   - Key: OPENSHIFT_FUSE_LOG_DIR
     Type: environment
     Description: "Directory to store application log files."
-  - Key: ZOOKEEPER_URL
+  - Key: OPENSHIFT_FUSE_ZOOKEEPER_URL
     Type: environment
     Description: "The url to zookeeper."
-  - Key: ZOOKEEPER_PASSWORD
+  - Key: OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD
     Type: environment
     Description: "The zookeeper password."
   - Key: MAVEN_UPLOAD_URL

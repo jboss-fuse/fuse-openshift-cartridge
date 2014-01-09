@@ -4,98 +4,17 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 BUILD=redhat-312
 
-function install_fabric() {
-    mkdir -p $OPENSHIFT_FUSE_DIR
-    cd $OPENSHIFT_FUSE_DIR
-    curl --write-out %{http_code} --silent --output fuse-fabric-1.0.0.${BUILD}.zip https://repository.jboss.org/nexus/content/groups/ea/io/fabric8/fuse-fabric/1.0.0.${BUILD}/fuse-fabric-1.0.0.${BUILD}.zip
-    unzip fuse-fabric-1.0.0.${BUILD}.zip
-    ln -s fuse-fabric-1.0.0.${BUILD} container
-}
-
-function replace_property_value {
-  sed "s/$1.*=.*/$1 = $2/g" $3 > $3.tmp
-  rm $3
-  mv $3.tmp $3
-}
-
-
 case "$1" in
   -v|--version)
     version="$2"
 esac
-
 echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
+
 #Download and extract the Fuse Fabric Distribution
-install_fabric
-
-if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD:-}" ]; then
-  password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}
-else 
-  # generate password and setup env vars
-  echo 'Generating username and password'
-  password=$(generate_password)
-fi
-
-# Copy the version specific files into diy directory
-shopt -s dotglob
+mkdir -p $OPENSHIFT_FUSE_DIR
 cd $OPENSHIFT_FUSE_DIR
-erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.management.cfg.erb > container/etc/org.apache.karaf.management.cfg
-erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.apache.karaf.shell.cfg.erb > container/etc/org.apache.karaf.shell.cfg
-erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.ops4j.pax.web.cfg.erb > container/etc/org.ops4j.pax.web.cfg
-erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/org.ops4j.pax.logging.cfg.erb > container/etc/org.ops4j.pax.logging.cfg
-erb $OPENSHIFT_FUSE_DIR/versions/$version/etc/system.properties.erb > container/etc/system.properties
-cp -r $OPENSHIFT_FUSE_DIR/versions/$version/bin/* container/bin/
-cp -r $OPENSHIFT_FUSE_DIR/versions/$version/template/* $OPENSHIFT_FUSE_DIR/template
-cp $OPENSHIFT_FUSE_DIR/versions/$version/etc/jetty.xml container/etc/jetty.xml
+curl --write-out %{http_code} --silent --output fuse-fabric-1.0.0.${BUILD}.zip https://repository.jboss.org/nexus/content/groups/ea/io/fabric8/fuse-fabric/1.0.0.${BUILD}/fuse-fabric-1.0.0.${BUILD}.zip
+unzip fuse-fabric-1.0.0.${BUILD}.zip
+ln -s fuse-fabric-1.0.0.${BUILD} container
 
-# Do not use jmxremote option
-echo "export JAVA_OPTS=\"-server -Xms128M -Xmx512M -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass -XX:PermSize=16M -XX:MaxPermSize=128M\"" >> container/bin/setenv
-
-# Append shutdown configuration
-echo "karaf.shutdown.host=${OPENSHIFT_FUSE_IP}" >> container/etc/config.properties
-echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/config.properties
-# Limit the maximum number of created threads
-echo "felix.threading.timeout=0" >> container/etc/config.properties
-# Store password
-echo "admin=$password,admin" > container/etc/users.properties
-echo "$password" > container/etc/passwd
-echo "zookeeper.password=$password" >> container/etc/system.properties
-echo "fabric.environment=openshift" >> container/etc/system.properties
-
-# Configure to join an existing fabric
-if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
-  FABRIC_CHECKER="${OPENSHIFT_FUSE_DIR}/container/etc/fabric-configured"
-  echo "zookeeper.url=$OPENSHIFT_FUSE_ZOOKEEPER_URL" >> container/etc/system.properties
-  echo "true" > $FABRIC_CHECKER
-
-# Turn into a fabric root container
-else
-	# Additional system properties
-	echo "# Root fabric container" >> container/etc/system.properties
-	echo "ensemble.auto.start=true" >> container/etc/system.properties
-	echo "profiles=hawtio openshift" >> container/etc/system.properties
-	echo "profiles.auto.import.path=fabric/import/" >> container/etc/system.properties
-	echo "zookeeper.server.port=${OPENSHIFT_FUSE_ZOOKEEPER_PORT}" >> container/etc/system.properties
-	echo "zookeeper.server.connection.port=${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}" >> container/etc/system.properties
-
-	# Temporary fix, till added to fabric by default
-	echo "org.ops4j.pax.web.listening.addresses=\${zk:\${karaf.name}/bindaddress}" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
-	echo "org.osgi.service.http.port=\${env:OPENSHIFT_FUSE_HTTP_PORT}" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
-	echo "org.osgi.service.http.connection.port=80" >> container/fabric/import/fabric/configs/versions/1.0/profiles/default/org.ops4j.pax.web.properties
-#	cp container/etc/jetty.xml container/fabric/import/fabric/configs/versions/1.0/profiles/default/
-
-	add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}"
-	add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD=$password"
-	add_domain_env_var "MAVEN_UPLOAD_URL=${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_HTTP_PORT}/maven/upload/"
-fi
-
-client_result ""
-client_result "Fuse created successfully.  Please make note of these credentials:"
-client_result ""
-client_result "   User: admin"
-client_result "   Password: $password"
-if [ -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
-	client_result "   Zookeeper URL: ${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}"
-	client_result "   Zookeeper Password: $password"
-fi	
-client_result ""
+client_result "Done setup"
