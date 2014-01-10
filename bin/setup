@@ -17,4 +17,3 @@ curl --write-out %{http_code} --silent --output fuse-fabric-1.0.0.${BUILD}.zip h
 unzip fuse-fabric-1.0.0.${BUILD}.zip
 ln -s fuse-fabric-1.0.0.${BUILD} container
 
-client_result "Done setup"

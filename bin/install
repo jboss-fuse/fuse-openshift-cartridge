@@ -20,4 +20,3 @@ echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/conf
 echo "felix.threading.timeout=0" >> container/etc/config.properties
 
 
-client_result "Done install"
