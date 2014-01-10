@@ -43,15 +43,24 @@
 # export KARAF_DATA # Karaf data folder
 # export KARAF_BASE # Karaf base folder
 # export KARAF_OPTS # Additional available Karaf options
+
+# Compute memory settings
+if [ -z "$JVM_HEAP_RATIO" ]; then
+	JVM_HEAP_RATIO=0.75
+fi
+if [ -z "$JVM_PERMGEN_RATIO" ]; then
+	JVM_PERMGEN_RATIO=0.2
+fi
+max_memory_mb=${OPENSHIFT_GEAR_MEMORY_MB}
+max_heap=$( echo "$max_memory_mb * $JVM_HEAP_RATIO" | bc | awk '{print int($1+0.5)}')
+max_permgen=$( echo "$max_memory_mb * $JVM_PERMGEN_RATIO" | bc | awk '{print int($1+0.5)}')
+if [ $max_permgen -gt 256 ]; then
+	max_permgen=256
+fi
 export JAVA_MIN_MEM=128M
 export JAVA_PERM_MEM=16M
-export JAVA_MAX_MEM=384M
-export JAVA_MAX_PERM_MEM=64M
-if [ "$OPENSHIFT_GEAR_MEMORY_MB" = "1024" ]; then
-	export JAVA_MAX_MEM=768M
-	export JAVA_MAX_PERM_MEM=128M
-elif [ "$OPENSHIFT_GEAR_MEMORY_MB" = "2048" ]; then
-	export JAVA_MAX_MEM=1536M
-	export JAVA_MAX_PERM_MEM=256M
-fi
+export JAVA_MAX_MEM=${max_heap}M
+export JAVA_MAX_PERM_MEM=${max_permgen}M
+
+# Export options
 export JAVA_OPTS="-server -XX:+UnlockDiagnosticVMOptions -XX:+UnsyncloadClass -Xms$JAVA_MIN_MEM -Xmx$JAVA_MAX_MEM -XX:PermSize=$JAVA_PERM_MEM -XX:MaxPermSize=$JAVA_MAX_PERM_MEM"
