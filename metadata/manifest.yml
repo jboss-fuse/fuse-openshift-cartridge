@@ -3,7 +3,7 @@ Cartridge-Short-Name: FUSE
 Display-Name: JBoss Fuse 6.1.0 EA
 Description: "Runs a JBoss Fuse container on OpenShift."
 Version: '1.0.0'
-Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/jboss-fuse-6.1.x-313.zip
+Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/master.zip
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
 Cartridge-Version: 0.0.1
@@ -80,6 +80,8 @@ Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: SSH_PORT
     Private-Port:      23101
+    Public-Port-Name:  SSH_PROXY_PORT
+    Options:           { "ssl_to_gear": true }
   - Private-IP-Name:   IP
     Private-Port-Name: RMI_SERVER_PORT
     Private-Port:      44444
