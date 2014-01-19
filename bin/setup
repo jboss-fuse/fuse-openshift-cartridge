@@ -13,7 +13,8 @@ echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
 #Download and extract the Fuse Fabric Distribution
 mkdir -p $OPENSHIFT_FUSE_DIR
 cd $OPENSHIFT_FUSE_DIR
-curl --write-out %{http_code} --silent --output fuse-fabric-1.0.0.${BUILD}.zip https://repository.jboss.org/nexus/content/groups/ea/io/fabric8/fuse-fabric/1.0.0.${BUILD}/fuse-fabric-1.0.0.${BUILD}.zip
-unzip fuse-fabric-1.0.0.${BUILD}.zip
-ln -s fuse-fabric-1.0.0.${BUILD} container
+curl --write-out %{http_code} --silent --output fabric8-karaf-1.0.0.${BUILD}.zip https://repository.jboss.org/nexus/content/groups/ea/io/fabric8/fabric8-karaf/1.0.0.${BUILD}/fabric8-karaf-1.0.0.${BUILD}.zip
+unzip fabric8-karaf-1.0.0.${BUILD}.zip
+ln -s fabric8-karaf-1.0.0.${BUILD} container
+
 
