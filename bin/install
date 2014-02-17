@@ -14,6 +14,7 @@ done
 
 cd $OPENSHIFT_FUSE_DIR
 # Append shutdown configuration
+echo "" >> container/etc/config.properties
 echo "karaf.shutdown.host=${OPENSHIFT_FUSE_IP}" >> container/etc/config.properties
 echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/config.properties
 # Limit the maximum number of created threads
