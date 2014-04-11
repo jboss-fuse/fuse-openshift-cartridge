@@ -15,7 +15,7 @@ mkdir -p $OPENSHIFT_FUSE_DIR
 cd $OPENSHIFT_FUSE_DIR
 
 # try public fuse repository and fallback to ea repository
-HTTP_CODE=`curl --write-out %{http_code} --silent --output fabric8-karaf-1.0.0.${BUILD}.zip https://repository.jboss.org/nexus/content/groups/public/io/fabric8/fabric8-karaf/1.0.0.${BUILD}/fabric8-karaf-1.0.0.${BUILD}.zip`
+HTTP_CODE=`curl --write-out %{http_code} --silent --output fabric8-karaf-1.0.0.${BUILD}.zip https://repository.jboss.org/nexus/content/groups/fs-public/io/fabric8/fabric8-karaf/1.0.0.${BUILD}/fabric8-karaf-1.0.0.${BUILD}.zip`
 if [ $HTTP_CODE != 200 ]; then
   curl --write-out %{http_code} --silent --output fabric8-karaf-1.0.0.${BUILD}.zip https://repository.jboss.org/nexus/content/groups/ea/io/fabric8/fabric8-karaf/1.0.0.${BUILD}/fabric8-karaf-1.0.0.${BUILD}.zip
 fi
