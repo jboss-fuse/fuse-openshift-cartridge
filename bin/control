@@ -90,13 +90,17 @@ function setup() {
 }
 
 function start() {
-	if [ ! -f $FABRIC_CHECKER ]; then
-		setup
-	else
-		${FUSE_BIN_DIR}/start
-		wait_for_start    
-	fi
-    client_result "Started Fuse cart"
+  if is_running; then
+    client_message "Fuse cart already started"
+  else  
+    if [ ! -f $FABRIC_CHECKER ]; then
+      setup
+    else
+      ${FUSE_BIN_DIR}/start
+      wait_for_start    
+    fi
+    client_message "Started Fuse cart"
+  fi
 }
 
 function stop() {
@@ -106,6 +110,7 @@ function stop() {
         do
             if ps -p $PID > /dev/null; then
                 echo "Fabric has been successfully stopped"
+                rm $FUSE_PID_FILE
                 break
             else
                 sleep 3
@@ -153,6 +158,7 @@ function is_running() {
    elif ps -p $PID > /dev/null; then
       return 0
    else
+      rm $FUSE_PID_FILE
       return 1
    fi
 }
