@@ -56,5 +56,5 @@ rm -rf %{buildroot}
 
 
 %changelog
-* Wed June 11 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.379-1
+* Wed Jun 11 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.379-1
 - Fuse 6.1 GA cartridge
