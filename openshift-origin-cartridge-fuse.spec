@@ -1,14 +1,14 @@
 %global cartridgedir %{_libexecdir}/openshift/cartridges/v2/fuse
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/fuse
 
-Name: openshift-origin-cartridge-fuse
-Version: 0.3.1
+Name: fuse-openshift-cartridge-openshift-enterprise-rpm
+Version: 6.1
 Release: 1%{?dist}
-Summary: FUSE cartridge
+Summary: Fuse cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
-Source0: http://mirror.openshift.com/pub/origin-server/source/%{name}/%{name}-%{version}.tar.gz
+Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-rpm-6.1.zip
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 
@@ -16,7 +16,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 
 %description
-FUSE cartridge for openshift. (Cartridge Format V2)
+Fuse cartridge for openshift. (Cartridge Format V2)
 
 
 %prep
