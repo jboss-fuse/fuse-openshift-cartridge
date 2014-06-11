@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/v2/fuse
 
 Name: fuse-openshift-cartridge-openshift-enterprise-rpm
-Version: 6.1
+Version: 6.1.0.redhat-379
 Release: 1%{?dist}
 Summary: Fuse cartridge
 Group: Development/Languages
