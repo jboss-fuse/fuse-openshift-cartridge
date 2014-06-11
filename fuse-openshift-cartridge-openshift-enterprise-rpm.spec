@@ -8,7 +8,7 @@ Summary: Fuse cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
-Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-rpm-6.1.zip
+Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-rpm-6.1.tar.gz
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 
