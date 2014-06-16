@@ -3,7 +3,7 @@
 
 Name: fuse-openshift-cartridge-openshift-enterprise-rpm
 Version: 6.1.0.redhat.382
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Fuse cartridge
 Group: Development/Languages
 License: ASL 2.0
@@ -56,6 +56,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed Jun 16 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.382-3
+- Use 382 build no rather than 379
+- Use redhat vendor name
+
 * Wed Jun 11 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.382-1
 - Fuse 6.1 rollup patch #1
 
