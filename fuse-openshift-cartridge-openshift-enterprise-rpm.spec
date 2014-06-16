@@ -3,12 +3,12 @@
 
 Name: fuse-openshift-cartridge-openshift-enterprise-rpm
 Version: 6.1.0.redhat.382
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Fuse cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
-Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-rpm-6.1-6.1.0.redhat.382-1.tar.gz
+Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-rpm-6.1-6.1.0.redhat.382-2.tar.gz
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 
