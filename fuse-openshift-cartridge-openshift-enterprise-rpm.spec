@@ -1,5 +1,5 @@
-%global cartridgedir %{_libexecdir}/openshift/cartridges/v2/fuse
-%global frameworkdir %{_libexecdir}/openshift/cartridges/v2/fuse
+%global cartridgedir %{_libexecdir}/openshift/cartridges/fuse
+%global frameworkdir %{_libexecdir}/openshift/cartridges/fuse
 
 Name: fuse-openshift-cartridge-openshift-enterprise-rpm
 Version: 6.1.0.redhat.382
@@ -16,7 +16,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 
 %description
-Fuse cartridge for openshift. (Cartridge Format V2)
+Fuse cartridge for openshift.
 
 
 %prep
@@ -27,9 +27,9 @@ Fuse cartridge for openshift. (Cartridge Format V2)
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
-mkdir -p %{buildroot}/%{_sysconfdir}/openshift/cartridges/v2
+mkdir -p %{buildroot}/%{_sysconfdir}/openshift/cartridges
 cp -r * %{buildroot}%{cartridgedir}/
-ln -s %{cartridgedir}/conf/ %{buildroot}/%{_sysconfdir}/openshift/cartridges/v2/%{name}
+ln -s %{cartridgedir}/conf/ %{buildroot}/%{_sysconfdir}/openshift/cartridges/%{name}
 
 
 %clean
@@ -37,7 +37,7 @@ rm -rf %{buildroot}
 
 
 %post
-%{_sbindir}/oo-admin-cartridge --action install --offline --source /usr/libexec/openshift/cartridges/v2/fuse
+%{_sbindir}/oo-admin-cartridge --action install --offline --source /usr/libexec/openshift/cartridges/fuse
 
 %files
 %defattr(-,root,root,-)
@@ -48,7 +48,7 @@ rm -rf %{buildroot}
 %dir %{cartridgedir}/versions
 %attr(0755,-,-) %{cartridgedir}/bin/
 %attr(0755,-,-) %{frameworkdir}
-%{_sysconfdir}/openshift/cartridges/v2/%{name}
+%{_sysconfdir}/openshift/cartridges/%{name}
 %{cartridgedir}/metadata/manifest.yml
 %doc %{cartridgedir}/README.md
 %doc %{cartridgedir}/COPYRIGHT
