@@ -2,13 +2,13 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/fuse
 
 Name: fuse-openshift-cartridge-openshift-enterprise-rpm
-Version: 6.1.0.redhat.382
-Release: 3%{?dist}
+Version: 6.1.0.redhat.385
+Release: 1%{?dist}
 Summary: Fuse cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
-Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-rpm-6.1-6.1.0.redhat.382-3.tar.gz
+Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-rpm-6.1-6.1.0.redhat.385-1.tar.gz
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 
@@ -56,6 +56,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Wed July 9 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.385-1
+- https://bugzilla.redhat.com/show_bug.cgi?id=1109058
+- https://bugzilla.redhat.com/show_bug.cgi?id=1109117
+
 * Wed Jun 16 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.382-3
 - Use 382 build no rather than 379
 - Use redhat vendor name
