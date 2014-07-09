@@ -23,12 +23,12 @@ function setup() {
     elif [ ! -z "${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD:-}" ]; then
 		client_result "Using provided password from domain"
 		export OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD}
-		echo OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD > ${OPENSHIFT_FUSE_DIR}/env/OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD
+                set_env_var OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" env
 	else
 		# generate password and setup env vars
 		client_result "Generating password"
 		export OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=$(generate_password)
-		echo OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD > ${OPENSHIFT_FUSE_DIR}/env/OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD
+                set_env_var OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" env
 	fi
 	# Store password
 	echo "admin=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD},admin" > $FUSE_USRPROPS_FILE
@@ -43,14 +43,14 @@ function setup() {
 	elif  [ ! -z "${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL:-}" ]; then
 		client_result "Using provided url from domain"
 		export OPENSHIFT_FUSE_ZOOKEEPER_URL=${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL}
-		echo "${OPENSHIFT_FUSE_ZOOKEEPER_URL}" > ${OPENSHIFT_FUSE_DIR}/env/OPENSHIFT_FUSE_ZOOKEEPER_URL
+                set_env_var OPENSHIFT_FUSE_ZOOKEEPER_URL "${OPENSHIFT_FUSE_ZOOKEEPER_URL}" env
 		join=true
 	# Turn into a fabric root container
 	else
 		# Additional system properties
 		client_result "Configuring zookeeper server"
 		export OPENSHIFT_FUSE_ZOOKEEPER_URL=${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}
-		echo "${OPENSHIFT_FUSE_ZOOKEEPER_URL}" > ${OPENSHIFT_FUSE_DIR}/env/OPENSHIFT_FUSE_ZOOKEEPER_URL
+                set_env_var OPENSHIFT_FUSE_ZOOKEEPER_URL "${OPENSHIFT_FUSE_ZOOKEEPER_URL}" env
 		replace_property_value ensemble.auto.start true $FUSE_SYSPROPS_FILE
 		echo "zookeeper.server.port=${OPENSHIFT_FUSE_ZOOKEEPER_PORT}" >> $FUSE_SYSPROPS_FILE
 		echo "zookeeper.server.connection.port=${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}" >> $FUSE_SYSPROPS_FILE
