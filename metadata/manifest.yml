@@ -11,7 +11,10 @@ Cartridge-Vendor: fusesource
 Vendor: redhat
 Categories:
   - web_framework
-  - experimental
+  - java
+  - jboss
+  - xpaas
+  - service
 Website:
 Help-Topics:
   "Getting Started": https://www.openshift.com/community/videos/getting-started-with-diy-applications-on-openshift
