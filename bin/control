@@ -121,6 +121,7 @@ function stop() {
     else
          echo "Fuse cart was stopped already"
     fi
+}
 
 function restart() {
     if is_running; then
