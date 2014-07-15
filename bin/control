@@ -100,18 +100,23 @@ function start() {
 }
 
 function stop() {
-    PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
-    ${FUSE_BIN_DIR}/stop
-    for i in {1..20};
-        do
-            if ps -p $PID > /dev/null; then
-                echo "Fabric has been successfully stopped"
-                break
-            else
-                sleep 3
-            fi
-        done
-    client_result "Stopped Fuse cart"
+    if [ -f $AMQ_PID_FILE ];
+        PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
+        ${FUSE_BIN_DIR}/stop
+        for i in {1..20};
+            do
+                if ps -p $PID > /dev/null; then
+                    echo "Fabric has been successfully stopped"
+                    rm $FUSE_PID_FILE
+                    break
+                else
+                    sleep 3
+                fi
+            done
+        client_result "Stopped Fuse cart"
+    else
+         echo "Fuse cart was stopped already"
+    fi
 }
 
 function restart() {
