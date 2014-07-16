@@ -17,7 +17,7 @@ Categories:
   - service
 Website:
 Help-Topics:
-  "Getting Started": https://www.openshift.com/community/videos/getting-started-with-diy-applications-on-openshift
+  "Getting Started": https://www.openshift.com/videos/getting-started-with-jboss-fuse-on-openshift
 Cart-Data:
   - Key: OPENSHIFT_FUSE_LOG_DIR
     Type: environment
