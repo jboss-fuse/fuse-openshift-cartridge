@@ -92,8 +92,7 @@ function setup() {
 function start() {
   if is_running; then
     client_message "Fuse cart already started"
-  else  
-    if [ ! -f $FABRIC_CHECKER ]; then
+  elif [ ! -f $FABRIC_CHECKER ]; then
       setup
     else
       ${FUSE_BIN_DIR}/start
