@@ -10,4 +10,4 @@ locked_files:
 - version
 - version/*
 processed_templates:
-- "env/*.erb"
+- 'env/*.erb'
