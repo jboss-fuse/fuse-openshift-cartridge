@@ -2,7 +2,7 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-BUILD=redhat-385
+BUILD=$(find . -name jboss-fuse-full-6.1.0* | sed 's/.*jboss-fuse-full-6.1.0.\(.*\).zip/\1/')
 
 case "$1" in
   -v|--version)
