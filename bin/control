@@ -4,101 +4,13 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 FUSE_BIN_DIR=${OPENSHIFT_FUSE_DIR}/container/bin
 FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
 FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
-FUSE_USRPROPS_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/users.properties
-FUSE_SYSPROPS_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/system.properties
-FABRIC_CHECKER=${OPENSHIFT_FUSE_DIR}/container/etc/fabric-configured
-
-function replace_property_value {
-  sed "s/$1.*=.*/$1 = $2/g" $3 > $3.tmp
-  rm $3
-  mv $3.tmp $3
-}
-
-function setup() {
-	client_result "Setting up fabric container"
-
-	# Retrieve password
-	if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD:-}" ]; then
-		client_result "Using provided password from cartridge"
-    elif [ ! -z "${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD:-}" ]; then
-		client_result "Using provided password from domain"
-		export OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD}
-                set_env_var OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" env
-	else
-		# generate password and setup env vars
-		client_result "Generating password"
-		export OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=$(generate_password)
-                set_env_var OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" env
-	fi
-	# Store password
-	echo "admin=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD},admin" > $FUSE_USRPROPS_FILE
-	echo "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" > $FUSE_PASSWD_FILE
-	echo "zookeeper.password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" >> $FUSE_SYSPROPS_FILE
-
-	# Configure to join an existing fabric
-	join=false
-	if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
-		client_result "Using provided url from cartridge"
-		echo "zookeeper.url=$OPENSHIFT_FUSE_ZOOKEEPER_URL" >> $FUSE_SYSPROPS_FILE
-	elif  [ ! -z "${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL:-}" ]; then
-		client_result "Using provided url from domain"
-		export OPENSHIFT_FUSE_ZOOKEEPER_URL=${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL}
-                set_env_var OPENSHIFT_FUSE_ZOOKEEPER_URL "${OPENSHIFT_FUSE_ZOOKEEPER_URL}" env
-		join=true
-	# Turn into a fabric root container
-	else
-		# Additional system properties
-		client_result "Configuring zookeeper server"
-		export OPENSHIFT_FUSE_ZOOKEEPER_URL=${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}
-                set_env_var OPENSHIFT_FUSE_ZOOKEEPER_URL "${OPENSHIFT_FUSE_ZOOKEEPER_URL}" env
-		replace_property_value ensemble.auto.start true $FUSE_SYSPROPS_FILE
-		echo "zookeeper.server.port=${OPENSHIFT_FUSE_ZOOKEEPER_PORT}" >> $FUSE_SYSPROPS_FILE
-		echo "zookeeper.server.connection.port=${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}" >> $FUSE_SYSPROPS_FILE
-	fi
-
-	client_result ""
-	client_result "Fuse created successfully.  Please make note of these credentials:"
-	client_result ""
-	client_result "   Console URL:        http://${OPENSHIFT_GEAR_DNS}"
-	client_result "   Console User:       admin"
-	client_result "   Console Password:   ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
-	client_result "   Zookeeper URL:      ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
-	client_result "   Zookeeper Password: ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
-	client_result ""
-	client_result "   The Fuse Management Console will be available shortly at: http://${OPENSHIFT_GEAR_DNS}"
-	client_result ""
-
-	add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
-	add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
-
-	cart_props "username=admin"
-	cart_props "password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
-		
-	${FUSE_BIN_DIR}/start
-	wait_for_start    
-	
-	if $join; then
-        ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.Join"
-        ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
-		client_result "WARNING: Creating fabric containers directly from"
-		client_result "         openshift is supported in a limited way"
-		client_result "         as such containers can not be fully managed"
-		client_result "         by fabric."
-	fi
-
-	echo "true" > $FABRIC_CHECKER
-}
 
 function start() {
   if is_running; then
     client_message "Fuse cart already started"
   else  
-    if [ ! -f $FABRIC_CHECKER ]; then
-      setup
-    else
-      ${FUSE_BIN_DIR}/start
-      wait_for_start    
-    fi
+    ${FUSE_BIN_DIR}/start
+    wait_for_start    
     client_message "Started Fuse cart"
   fi
 }
