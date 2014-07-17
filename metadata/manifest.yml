@@ -120,3 +120,5 @@ Endpoints:
     Public-Port-Name:  ES_TCP_PROXY_PORT
     Options:           { "ssl_to_gear": true }
 Install-Build-Required: false
+Additional-Control-Actions:
+- threaddump
