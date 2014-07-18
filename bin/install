@@ -2,7 +2,7 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-BUILD=$(find . -name jboss-fuse-full-6.1.0* | sed 's/.*jboss-fuse-full-6.1.0.\(.*\).zip/\1/')
+BUILD=$(find . -name "jboss-fuse-full-6.1.0*" | sed 's/.*jboss-fuse-full-6.1.0.\(.*\).zip/\1/' | sort | tail -n 1)
 FUSE_BIN_DIR=${OPENSHIFT_FUSE_DIR}/container/bin
 FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
 FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
