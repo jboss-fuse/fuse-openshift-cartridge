@@ -23,6 +23,10 @@ Fuse cartridge for openshift.
 %setup -q
 
 %build
+cd %{_builddir}/fuse-openshift-cartridge-openshift-enterprise-rpm-6.1.0.redhat.385
+unzip jboss-fuse-full-6.1.0.redhat-385.zip
+rm jboss-fuse-full-6.1.0.redhat-385.zip
+mv jboss-fuse-6.1.0.redhat-385 usr
 
 %install
 rm -rf %{buildroot}
@@ -40,6 +44,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %dir %{cartridgedir}
 %dir %{cartridgedir}/bin
+%dir %{cartridgedir}/usr
 %dir %{cartridgedir}/env
 %dir %{cartridgedir}/metadata
 %dir %{cartridgedir}/versions
