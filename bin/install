@@ -127,9 +127,6 @@ client_result ""
 client_result "   The Fuse Management Console will be available shortly at: http://${OPENSHIFT_GEAR_DNS}"
 client_result ""
 
-add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
-add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
-
 cart_props "username=admin"
 cart_props "password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
     
@@ -143,5 +140,8 @@ if $join; then
     client_result "         openshift is supported in a limited way"
     client_result "         as such containers can not be fully managed"
     client_result "         by fabric."
+else
+    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
+    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
 fi
 
