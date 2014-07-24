@@ -99,7 +99,18 @@ function wait_for_start() {
            fi
      done
      if ps -p $PID > /dev/null; then
-       client_result "Fabric($PID) is started successfully"
+      retries=10
+      while [ $retries -gt 0 ]; do
+         res=$(curl -w %{http_code} --output /dev/null -s http://$OPENSHIFT_FUSE_IP:8080/hawtio/index.html)
+         [ $res -eq "200" ] && break
+         let retries=$retries-1
+         sleep 6
+      done
+      if [ $res -eq "200" ]; then
+        client_result "Fabric($PID) is started successfully"
+      else
+        client_error "Command Failed: Could not reach Fuse console, http response $res"
+      fi
      else
        client_error "Command Failed: Fuse process ($PID) is not running"
      fi
