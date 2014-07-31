@@ -16,7 +16,7 @@ function start() {
 }
 
 function stop() {
-    if [ -f $AMQ_PID_FILE ]; then
+    if [ -f $FUSE_PID_FILE ]; then
         PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
         ${FUSE_BIN_DIR}/stop
         for i in {1..20};
