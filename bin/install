@@ -59,7 +59,11 @@ rm -f jboss-fuse-full-6.1.0.${BUILD}.zip
 
 # Copy the version specific files into container directory
 cd $OPENSHIFT_FUSE_DIR/versions/$version
-for i in */* ; do
+files=$(find . -name \*)
+for i in $files ; do
+  if [ -d $i ]; then
+    continue
+  fi
   if [[ $i == *.erb ]]; then
     erb $i > $OPENSHIFT_FUSE_DIR/container/${i%.*}
   else
