@@ -35,7 +35,6 @@ rm -rf %{buildroot}
 
 
 %post
-%{_sbindir}/oo-admin-cartridge --action install --offline --source /usr/libexec/openshift/cartridges/fuse
 
 %files
 %defattr(-,root,root,-)
