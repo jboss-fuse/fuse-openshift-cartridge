@@ -1,7 +1,7 @@
 %global cartridgedir %{_libexecdir}/openshift/cartridges/fuse
 %global frameworkdir %{_libexecdir}/openshift/cartridges/fuse
 
-Name: fuse-openshift-cartridge-openshift-enterprise-rpm
+Name: openshift-origin-cartridge-fuse
 Version: 6.1.0.redhat.385
 Release: 2%{?dist}
 Summary: Fuse cartridge
@@ -35,7 +35,6 @@ rm -rf %{buildroot}
 
 
 %post
-%{_sbindir}/oo-admin-cartridge --action install --offline --source /usr/libexec/openshift/cartridges/fuse
 
 %files
 %defattr(-,root,root,-)
