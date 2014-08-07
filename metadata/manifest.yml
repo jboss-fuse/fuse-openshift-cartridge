@@ -77,7 +77,7 @@ Endpoints:
     Mappings:
       - Frontend:      ""
         Backend:       ""
-        Options:       { "tohttps": true }
+#        Options:       { "tohttps": true }
   - Private-IP-Name:   IP
     Private-Port-Name: SHUTDOWN_PORT
     Private-Port:      15001
