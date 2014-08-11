@@ -151,6 +151,8 @@ echo "zookeeper.password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" >> $FUSE_SYSPROPS
 # Trust even self signed certs since OS gives us a self signed cert.
 # echo "javax.net.ssl.trustAll=true" >> $FUSE_SYSPROPS_FILE
 
+FUSE_CERT=""
+
 # Configure to join an existing fabric
 join=false
 if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
@@ -170,6 +172,13 @@ else
     replace_property_value ensemble.auto.start true $FUSE_SYSPROPS_FILE
     echo "zookeeper.server.port=${OPENSHIFT_FUSE_ZOOKEEPER_PORT}" >> $FUSE_SYSPROPS_FILE
     echo "zookeeper.server.connection.port=${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}" >> $FUSE_SYSPROPS_FILE
+    
+    # Lets create a self signed cert for SSL
+    FUSE_KEYSTORE_FILE="$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/default/keystore.jks"
+    FUSE_CERT_FILE="$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/default/keystore.cert"
+    keytool -genkey -storetype JKS -storepass "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" -keystore "${FUSE_KEYSTORE_FILE}" -keypass "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=${OPENSHIFT_GEAR_DNS}" -validity 3650
+    keytool -exportcert -keystore "${FUSE_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" --rfc > "${FUSE_CERT_FILE}"
+    FUSE_CERT=`cat "${FUSE_CERT_FILE}"`
 fi
 
 client_result ""
@@ -180,13 +189,16 @@ client_result "   Console User:       admin"
 client_result "   Console Password:   ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
 client_result "   Zookeeper URL:      ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
 client_result "   Zookeeper Password: ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
+if [ ! -z "${FUSE_CERT:-}" ]; then
+client_result "   SSL self signed certificate: " 
+client_result "${FUSE_CERT}"
+fi
 client_result ""
 client_result "   The Fuse Management Console will be available shortly at: http://${OPENSHIFT_GEAR_DNS}"
 client_result ""
 
 cart_props "username=admin"
 cart_props "password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
-    
 
 if $join; then
     ${FUSE_BIN_DIR}/start
@@ -201,4 +213,3 @@ else
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
 fi
-
