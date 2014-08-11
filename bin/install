@@ -71,6 +71,16 @@ for i in $files ; do
   fi
 done
 
+# Remove Unsupported Profiles
+cd $OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles
+rm -rf controller-jon-server controller-rhq-agent controller-tomcat controller-wildfly openshift-jbossews.1 openshift-jbossews.2 docker
+rm -rf gateway-haproxy gateway-http gateway-mq
+rm -rf hadoop-base hadoop-datanode hadoop-namenode
+rm -rf insight insight-camel insight-core insight-hdfs insight-jetty insight-kibana
+rm -rf jboss-brms-controller-tomcat jboss-brms-controller-wildfly jboss-brms-feature-workbench jboss-brms-feature-workbench.openshift
+rm -rf mq-replicated
+rm -rf openshift-aerogear-pushserver
+
 cd $OPENSHIFT_FUSE_DIR
 # Append shutdown configuration
 echo "" >> container/etc/config.properties
