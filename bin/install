@@ -44,6 +44,12 @@ function replace_property_value {
   mv $3.tmp $3
 }
 
+function sed_replace {
+  sed "$1" $2 > $2.tmp
+  rm $2
+  mv $2.tmp $2
+}
+
 case "$1" in
   -v|--version)
     version="$2"
@@ -54,7 +60,7 @@ echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
 cd $OPENSHIFT_FUSE_DIR
 
 unzip jboss-fuse-full-6.1.0.${BUILD}.zip >& /dev/null
-ln -s jboss-fuse-6.1.0.${BUILD} container
+ln -s jboss-fuse-full-6.1.0.${BUILD} container
 rm -f jboss-fuse-full-6.1.0.${BUILD}.zip
 
 # Copy the version specific files into container directory
@@ -83,8 +89,12 @@ rm -rf openshift-aerogear-pushserver
 
 #
 # Edit some profiles.
-grep -Rl OPENSHIFT_FUSE_AMQ_PORT . | xargs -n 1 sed -i '' 's/OPENSHIFT_FUSE_AMQ_PORT/OPENSHIFT_FUSE_APP_PORT_1/'
-grep -Rl OPENSHIFT_FUSE_AMQ_PROXY_PORT . | xargs -n 1 sed -i '' 's/OPENSHIFT_FUSE_AMQ_PROXY_PORT/OPENSHIFT_FUSE_APP_PORT_1_PROXY_PORT/'
+for i in `grep -Rl OPENSHIFT_FUSE_AMQ_PORT .` ; do
+  sed_replace 's/OPENSHIFT_FUSE_AMQ_PORT/OPENSHIFT_FUSE_APP_PORT_1/g' $i
+done
+for i in `grep -Rl OPENSHIFT_FUSE_AMQ_PROXY_PORT .` ; do
+  sed_replace 's/OPENSHIFT_FUSE_AMQ_PROXY_PORT/OPENSHIFT_FUSE_APP_PORT_1_PROXY_PORT/g' $i
+done
 
 cd $OPENSHIFT_FUSE_DIR
 # Append shutdown configuration
@@ -112,6 +122,9 @@ fi
 echo "admin=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD},admin" > $FUSE_USRPROPS_FILE
 echo "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" > $FUSE_PASSWD_FILE
 echo "zookeeper.password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" >> $FUSE_SYSPROPS_FILE
+
+# Trust even self signed certs since OS gives us a self signed cert.
+# echo "javax.net.ssl.trustAll=true" >> $FUSE_SYSPROPS_FILE
 
 # Configure to join an existing fabric
 join=false
