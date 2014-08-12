@@ -81,6 +81,11 @@ rm -rf jboss-brms-controller-tomcat jboss-brms-controller-wildfly jboss-brms-fea
 rm -rf mq-replicated
 rm -rf openshift-aerogear-pushserver
 
+#
+# Edit some profiles.
+grep -Rl OPENSHIFT_FUSE_AMQ_PORT . | xargs -n 1 sed -i '' 's/OPENSHIFT_FUSE_AMQ_PORT/OPENSHIFT_FUSE_APP_PORT_1/'
+grep -Rl OPENSHIFT_FUSE_AMQ_PROXY_PORT . | xargs -n 1 sed -i '' 's/OPENSHIFT_FUSE_AMQ_PROXY_PORT/OPENSHIFT_FUSE_APP_PORT_1_PROXY_PORT/'
+
 cd $OPENSHIFT_FUSE_DIR
 # Append shutdown configuration
 echo "" >> container/etc/config.properties

@@ -70,6 +70,10 @@ Group-Overrides:
   - components:
     - web-proxy
 Endpoints:
+  
+  #
+  # The Main HTTP port for the app.
+  #
   - Private-IP-Name:   IP
     Private-Port-Name: HTTP_PORT
     Private-Port:      8080
@@ -77,49 +81,94 @@ Endpoints:
     Mappings:
       - Frontend:      ""
         Backend:       ""
-#        Options:       { "tohttps": true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: SHUTDOWN_PORT
-    Private-Port:      15001
-  - Private-IP-Name:   IP
-    Private-Port-Name: SSH_PORT
-    Private-Port:      23101
-    Public-Port-Name:  SSH_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: RMI_SERVER_PORT
-    Private-Port:      44444
-  - Private-IP-Name:   IP
-    Private-Port-Name: RMI_REGISTRY_PORT
-    Private-Port:      16099
+        #Options:       { "tohttps": true }
+
+  #
+  # Gears inside of OpenShift can connect to these ports.
+  #
   - Private-IP-Name:   IP
     Private-Port-Name: ZOOKEEPER_PORT
     Private-Port:      3128
     Public-Port-Name:  ZOOKEEPER_PROXY_PORT
     Options:           { "ssl_to_gear": true }
   - Private-IP-Name:   IP
-    Private-Port-Name: AMQ_PORT
-    Private-Port:      31313
-    Public-Port-Name:  AMQ_PROXY_PORT
+    Private-Port-Name: SSH_PORT
+    Private-Port:      23101
+    Public-Port-Name:  SSH_PROXY_PORT
     Options:           { "ssl_to_gear": true }
   - Private-IP-Name:   IP
-    Private-Port-Name: AMQ_SSL_PORT
-    Private-Port:      31314
-    Public-Port-Name:  AMQ_SSL_PROXY_PORT
+    Private-Port-Name: APP_PORT_1
+    Private-Port:      3001
+    Public-Port-Name:  APP_PORT_1_PROXY_PORT
+    Options:           { "ssl_to_gear": true }
+  - Private-IP-Name:   IP
+    Private-Port-Name: APP_PORT_2
+    Private-Port:      3002
+    Public-Port-Name:  APP_PORT_2_PROXY_PORT
+    Options:           { "ssl_to_gear": true }
+  - Private-IP-Name:   IP
+    Private-Port-Name: APP_PORT_3
+    Private-Port:      3003
+    Public-Port-Name:  APP_PORT_3_PROXY_PORT
+    Options:           { "ssl_to_gear": true }
+
+  #
+  # Applications external to OpenShift can connect to these SNI/SSL ports.
+  #
+  - Private-IP-Name:   IP
+    Private-Port-Name: APP_TLS_PORT_1
+    Private-Port:      4001
+    Public-Port-Name:  APP_TLS_PORT_1_PROXY_PORT
     Protocols: [tls]
     Mappings:
     - Frontend: 'TLS_PORT_1'
       Backend: ''
   - Private-IP-Name:   IP
-    Private-Port-Name: ES_HTTP_PORT
-    Private-Port:      18080
-    Public-Port-Name:  ES_HTTP_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
+    Private-Port-Name: APP_TLS_PORT_2
+    Private-Port:      4002
+    Public-Port-Name:  APP_TLS_PORT_2_PROXY_PORT
+    Protocols: [tls]
+    Mappings:
+    - Frontend: 'TLS_PORT_2'
+      Backend: ''
   - Private-IP-Name:   IP
-    Private-Port-Name: ES_TCP_PORT
-    Private-Port:      19301
-    Public-Port-Name:  ES_TCP_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
+    Private-Port-Name: APP_TLS_PORT_3
+    Private-Port:      4002
+    Public-Port-Name:  APP_TLS_PORT_3_PROXY_PORT
+    Protocols: [tls]
+    Mappings:
+    - Frontend: 'TLS_PORT_3'
+      Backend: ''
+  - Private-IP-Name:   IP
+    Private-Port-Name: APP_TLS_PORT_4
+    Private-Port:      4002
+    Public-Port-Name:  APP_TLS_PORT_4_PROXY_PORT
+    Protocols: [tls]
+    Mappings:
+    - Frontend: 'TLS_PORT_4'
+      Backend: ''
+  - Private-IP-Name:   IP
+    Private-Port-Name: APP_TLS_PORT_5
+    Private-Port:      4005
+    Public-Port-Name:  APP_TLS_PORT_5_PROXY_PORT
+    Protocols: [tls]
+    Mappings:
+    - Frontend: 'TLS_PORT_5'
+      Backend: ''
+      
+  #
+  # Ports private to the gear
+  #
+  - Private-IP-Name:   IP
+    Private-Port-Name: SHUTDOWN_PORT
+    Private-Port:      15001
+  - Private-IP-Name:   IP
+    Private-Port-Name: RMI_SERVER_PORT
+    Private-Port:      44444
+  - Private-IP-Name:   IP
+    Private-Port-Name: RMI_REGISTRY_PORT
+    Private-Port:      16099
+
 Install-Build-Required: false
 Additional-Control-Actions:
 - threaddump
