@@ -1,0 +1,35 @@
+#!/bin/bash -eu
+
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+# these are not used yet...
+#fuse_version=$1
+#curr=$2
+#next=$3
+
+FUSE_BIN_DIR=${OPENSHIFT_FUSE_DIR}/container/bin
+FUSE_PATCH_DIR=${OPENSHIFT_FUSE_DIR}/patches
+FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
+password=`cat ${FUSE_PASSWD_FILE}`
+
+if [ -d $FUSE_PATCH_DIR ]; then
+  files=$(find $FUSE_PATCH_DIR -name "*.zip")
+  for i in $files ; do
+    if [ -d $i ]; then
+      continue
+    fi
+    if [[ $i == *.zip ]]; then
+      client_message "Waiting for container to be provisioned..."
+
+      ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'fabric:wait-for-provisioning --verbose --provision-timeout 120000'     
+      ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'dev:wait-for-service --timeout 240000 "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=fabric)(osgi.command.function=patch-apply))"'
+
+      client_message "Patching all profile versions with ${i}"
+
+      ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} "fabric:patch-apply --all-versions file:${i}"
+
+      # only want to apply patches once
+      mv $i "${i}.applied"
+    fi
+  done
+fi
