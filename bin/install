@@ -224,6 +224,10 @@ if $join; then
     wait_for_start
     ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"
     ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
+
+    # apply any patches we have in patches dir to the booted GA distro
+    ${OPENSHIFT_FUSE_DIR}/bin/upgrade
+
     client_result ""
     client_result "WARNING: Creating fabric containers directly from"
     client_result "         openshift is supported in a limited way"

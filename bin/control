@@ -13,6 +13,9 @@ function start() {
     wait_for_start    
     client_message "Started application"
   fi
+  
+  # apply any patches we have in patches dir to the booted GA distro
+  ${OPENSHIFT_FUSE_DIR}/bin/upgrade
 }
 
 

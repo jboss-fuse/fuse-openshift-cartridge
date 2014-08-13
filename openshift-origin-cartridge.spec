@@ -51,6 +51,7 @@ rm -rf %{buildroot}
 %dir %{cartridgedir}/usr
 %dir %{cartridgedir}/env
 %dir %{cartridgedir}/metadata
+%dir %{cartridgedir}/patches
 %dir %{cartridgedir}/versions
 %attr(0755,-,-) %{cartridgedir}/bin/
 %attr(0755,-,-) %{frameworkdir}
