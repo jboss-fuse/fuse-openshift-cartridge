@@ -9,6 +9,7 @@ Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
 Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-rpm-6.1-6.1.0.redhat.385-2.tar.gz
+Source1: https://repository.jboss.org/nexus/service/local/repositories/fs-snapshots/content/org/jboss/fuse/jboss-fuse-full/6.1.0.redhat-SNAPSHOT/jboss-fuse-full-6.1.0.redhat-385.zip
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 Requires:      rubygem-openshift-origin-frontend-haproxy-sni-proxy
@@ -19,15 +20,12 @@ BuildArch: noarch
 %description
 Fuse cartridge for openshift.
 
-
 %prep
-%setup -q
+%setup -q -n fuse-openshift-cartridge-openshift-enterprise-rpm-6.1-6.1.0.redhat.385-2
 
 %build
-cd %{_builddir}/fuse-openshift-cartridge-openshift-enterprise-rpm-6.1.0.redhat.385
-unzip jboss-fuse-full-6.1.0.redhat-385.zip
-rm jboss-fuse-full-6.1.0.redhat-385.zip
-mv jboss-fuse-6.1.0.redhat-385 usr
+unzip %SOURCE1
+mv jboss-fuse-* usr
 
 %install
 rm -rf %{buildroot}
