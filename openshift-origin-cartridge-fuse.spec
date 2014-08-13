@@ -9,7 +9,7 @@ Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
 Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-rpm-6.1.zip
-Source1: http://10.5.105.13/nexus/content/groups/ea/org/jboss/fuse/jboss-fuse-full/6.1.0.redhat-389/jboss-fuse-full-6.1.0.redhat-389.zip
+Source1: http://10.5.105.13/nexus/content/groups/ea/org/jboss/fuse/jboss-fuse-full/6.1.0.redhat-389/jboss-fuse-full-6.1.0.redhat-385.zip
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 Requires:      rubygem-openshift-origin-frontend-haproxy-sni-proxy
