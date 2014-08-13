@@ -11,6 +11,7 @@ URL: https://www.openshift.com
 Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-rpm-6.1-6.1.0.redhat.385-2.tar.gz
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
+Requires:      rubygem-openshift-origin-frontend-haproxy-sni-proxy
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
