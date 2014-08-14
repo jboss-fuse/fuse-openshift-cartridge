@@ -1,7 +1,7 @@
 %global cartridgedir %{_libexecdir}/openshift/cartridges/fuse
 %global frameworkdir %{_libexecdir}/openshift/cartridges/fuse
 
-%global product_build_number
+%global product_build_number 389
 
 Name: openshift-origin-cartridge-fuse
 Version: 6.1.0.redhat.%{product_build_number}
