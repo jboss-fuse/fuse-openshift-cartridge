@@ -177,6 +177,24 @@ else
     keytool -genkey -storetype JKS -storepass "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" -keystore "${FUSE_KEYSTORE_FILE}" -keypass "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=${OPENSHIFT_GEAR_DNS}" -validity 3650
     keytool -exportcert -keystore "${FUSE_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" --rfc > "${FUSE_CERT_FILE}"
     FUSE_CERT=`cat "${FUSE_CERT_FILE}"`
+    
+    # We need to create a broker profile that match the what mq-create would generate:
+    mkdir -p "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile"
+    cat > "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile/io.fabric8.agent.properties" <<EOF
+#Profile:mq-broker-default.${OPENSHIFT_APP_NAME}
+attribute.parents = mq-base
+EOF
+    cat > "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile/org.fusesource.mq.fabric.server-bar.properties" <<EOF
+standby.pool = default
+connectors = openwire
+broker-name = ${OPENSHIFT_APP_NAME}
+keystore.url = profile:keystore.jks
+data = \${karaf.base}/data/${OPENSHIFT_APP_NAME}
+config = profile:broker.xml
+group = default
+kind = MasterSlave
+EOF
+
 fi
 
 client_result ""
@@ -200,9 +218,11 @@ cart_props "password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
 
 if $join; then
     ${FUSE_BIN_DIR}/start
-    wait_for_start    
+    wait_for_start
+    # Create a broker profile on using the ZK server since it should be up and running.
+    ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_SSH_IP} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "fabric:mq-create ${OPENSHIFT_APP_NAME}"    
     ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"
-    ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
+    ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL} -p fabric -p mq-broker-default.${OPENSHIFT_APP_NAME}"
     client_result "WARNING: Creating fabric containers directly from"
     client_result "         openshift is supported in a limited way"
     client_result "         as such containers can not be fully managed"
