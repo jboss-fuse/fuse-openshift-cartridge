@@ -105,11 +105,11 @@ rm -rf openshift-aerogear-pushserver
 cd $OPENSHIFT_FUSE_DIR
 
 # Remove some default service configs since we don't need to boot up in full ESB mode.
-rm container/etc/org.apache.aries.transaction.cfg
-rm container/etc/org.apache.servicemix.jbi.cfg
-rm container/etc/org.apache.servicemix.nmr.cfg
-rm container/etc/org.fusesource.mq.fabric.server-default.cfg
-rm container/etc/activemq.xml
+rm container/etc/org.apache.aries.transaction.cfg || :
+rm container/etc/org.apache.servicemix.jbi.cfg || :
+rm container/etc/org.apache.servicemix.nmr.cfg || :
+rm container/etc/org.fusesource.mq.fabric.server-default.cfg || :
+rm container/etc/activemq.xml || :
 
 # Append shutdown configuration
 echo "" >> container/etc/config.properties
