@@ -102,15 +102,6 @@ rm -rf jboss-brms-controller-tomcat jboss-brms-controller-wildfly jboss-brms-fea
 rm -rf mq-replicated
 rm -rf openshift-aerogear-pushserver
 
-#
-# Edit some profiles.
-for i in `grep -Rl OPENSHIFT_FUSE_AMQ_PORT .` ; do
-  sed_replace 's/OPENSHIFT_FUSE_AMQ_PORT/OPENSHIFT_FUSE_APP_PORT_1/g' $i
-done
-for i in `grep -Rl OPENSHIFT_FUSE_AMQ_PROXY_PORT .` ; do
-  sed_replace 's/OPENSHIFT_FUSE_AMQ_PROXY_PORT/OPENSHIFT_FUSE_APP_PORT_1_PROXY_PORT/g' $i
-done
-
 cd $OPENSHIFT_FUSE_DIR
 
 # Remove some default service configs since we don't need to boot up in full ESB mode.
