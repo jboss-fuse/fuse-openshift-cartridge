@@ -2,7 +2,7 @@ Name: jboss-amq
 Cartridge-Short-Name: AMQ
 Display-Name: JBoss AMQ 6.1.0 EA
 Description: "Runs a JBoss AMQ container on OpenShift."
-Version: '6.1.0'
+Version: '1.0.0'
 Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-amq-rpm-6.1.zip
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
