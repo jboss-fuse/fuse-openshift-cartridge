@@ -1,4 +1,4 @@
-Name: jboss-amq
+Name: amq
 Cartridge-Short-Name: AMQ
 Display-Name: JBoss AMQ 6.1.0 EA
 Description: "Runs a JBoss AMQ container on OpenShift."
