@@ -1,9 +1,9 @@
-Name: fuse
-Cartridge-Short-Name: FUSE
-Display-Name: JBoss Fuse 6.1.0 EA
-Description: "Runs a JBoss Fuse container on OpenShift."
-Version: '1.0.0'
-Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/jboss-fuse-6.1.x-387.zip
+Name: jboss-amq
+Cartridge-Short-Name: AMQ
+Display-Name: JBoss AMQ 6.1.0 EA
+Description: "Runs a JBoss AMQ container on OpenShift."
+Version: '6.1.0'
+Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/openshift-enterprise-amq-rpm-6.1.zip
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
 Cartridge-Version: 0.0.1
@@ -15,17 +15,17 @@ Categories:
   - jboss
   - xpaas
   - service
-Website: http://www.redhat.com/products/jbossenterprisemiddleware/fuse/
+Website: http://www.redhat.com/products/jbossenterprisemiddleware/amq/
 Help-Topics:
-  "Getting Started": https://www.openshift.com/videos/getting-started-with-jboss-fuse-on-openshift
+#  "Getting Started": https://www.openshift.com/community/videos/getting-started-with-diy-applications-on-openshift
 Cart-Data:
-  - Key: OPENSHIFT_FUSE_LOG_DIR
+  - Key: OPENSHIFT_AMQ_LOG_DIR
     Type: environment
     Description: "Directory to store application log files."
-  - Key: OPENSHIFT_FUSE_ZOOKEEPER_URL
+  - Key: OPENSHIFT_AMQ_ZOOKEEPER_URL
     Type: environment
     Description: "The url to zookeeper."
-  - Key: OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD
+  - Key: OPENSHIFT_AMQ_ZOOKEEPER_PASSWORD
     Type: environment
     Description: "The zookeeper password."
   - Key: MAVEN_UPLOAD_URL
@@ -37,10 +37,10 @@ Cart-Data:
   - Key: OPENSHIFT_REPO_DIR
     Type: environemnt
     Description: "Application root directory where application files reside. This directory is reset every time you do a git-push"
-  - Key: OPENSHIFT_FUSE_PORT
+  - Key: OPENSHIFT_AMQ_PORT
     Type: environment
     Description: "Internal port to which the web-framework binds to."
-  - Key: OPENSHIFT_FUSE_IP
+  - Key: OPENSHIFT_AMQ_IP
     Type: environment
     Description: "Internal IP to which the web-framework binds to."
   - Key: OPENSHIFT_APP_DNS
@@ -59,8 +59,8 @@ Cart-Data:
     Type: environment
     Description: "Unique ID which identified the gear. This value changes between gears."
 Provides:
-  - fuse-7.3.0
-  - fuse
+  - jboss-amq-6.1.0
+  - jboss-amq
 Publishes:
 Subscribes:
 Scaling:

@@ -1,40 +1,41 @@
-%global cartridgedir %{_libexecdir}/openshift/cartridges/fuse
-%global frameworkdir %{_libexecdir}/openshift/cartridges/fuse
+%global cartridgedir %{_libexecdir}/openshift/cartridges/amq
+%global frameworkdir %{_libexecdir}/openshift/cartridges/amq
 
 %global product_build_number 389
-%global github_tag openshift-enterprise-rpm-6.1
+%global github_tag openshift-enterprise-amq-rpm-6.1
 
-Name: openshift-origin-cartridge-fuse
+Name: openshift-origin-cartridge-amq
 Version: 6.1.0.redhat.%{product_build_number}
-Release: 1%{?dist}
-Summary: Fuse cartridge
+Release: 2%{?dist}
+Summary: A-MQ cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
 Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/%{github_tag}.zip
-Source1: http://repository.jboss.org/nexus/content/groups/ea/org/jboss/fuse/jboss-fuse-full/6.1.0.redhat-%{product_build_number}/jboss-fuse-full-6.1.0.redhat-%{product_build_number}.zip
+Source1: https://repository.jboss.org/nexus/content/groups/ea/org/jboss/amq/jboss-a-mq/6.1.0.redhat-%{product_build_number}/jboss-a-mq-6.1.0.redhat-%{product_build_number}.zip
+
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
-Requires:      rubygem-openshift-origin-frontend-haproxy-sni-proxy
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 
 %description
-Fuse cartridge for openshift.
+A-MQ cartridge for openshift.
+
 
 %prep
 %setup -q -n fuse-openshift-cartridge-%{github_tag}
 
 %build
 unzip %SOURCE1
-mv jboss-fuse-* usr
+rm %SOURCE1
+mv jboss-a-mq-* usr
 
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{cartridgedir}
 cp -r * %{buildroot}%{cartridgedir}/
-
 
 %clean
 rm -rf %{buildroot}
@@ -60,15 +61,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Wed Jul 09 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.385-2
-- https://bugzilla.redhat.com/show_bug.cgi?id=1109058
-- https://bugzilla.redhat.com/show_bug.cgi?id=1109117
+- RPM version of the AMQ cart
 
-* Wed Jun 16 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.382-3
-- Use 382 build no rather than 379
-- Use redhat vendor name
-
-* Wed Jun 11 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.382-1
-- Fuse 6.1 rollup patch #1
-
-* Wed Jun 11 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.379-1
-- Fuse 6.1 GA cartridge
+* Thu Mar 24 2014 Hiram Chirino <hchirino@redhat.com> 0.1.0
+- Initial implementation based on the AMQ cartridge
