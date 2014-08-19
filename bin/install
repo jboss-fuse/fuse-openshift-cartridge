@@ -2,7 +2,6 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-BUILD=$(find . -name "jboss-fuse-full-6.1.0*" | sed 's/.*jboss-fuse-full-6.1.0.\(.*\).zip/\1/' | sort | tail -n 1)
 FUSE_BIN_DIR=${OPENSHIFT_FUSE_DIR}/container/bin
 FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
 FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
@@ -65,7 +64,6 @@ echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
 #Extract the Fuse Fabric Distribution
 cd $OPENSHIFT_FUSE_DIR
 
-#unzip jboss-fuse-full-6.1.0.${BUILD}.zip >& /dev/null
 mkdir $OPENSHIFT_FUSE_DIR/container
 cd $OPENSHIFT_FUSE_DIR/usr
 nonshared=("bin" "etc" "data" "deploy" "fabric" "instances" "lib" "quickstarts")
