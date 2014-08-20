@@ -2,7 +2,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/fuse
 
 %global product_build_number 389
-%global github_tag openshift-enterprise-rpm-6.1
+%global github_tag openshift-enterprise-fuse-rpm-6.1
 
 Name: openshift-origin-cartridge-fuse
 Version: 6.1.0.redhat.%{product_build_number}
