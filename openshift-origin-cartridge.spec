@@ -16,6 +16,8 @@ Source1: http://repository.jboss.org/nexus/content/groups/ea/org/jboss/fuse/jbos
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 Requires:      rubygem-openshift-origin-frontend-haproxy-sni-proxy
+Requires:      java-1.7.0-openjdk
+Requires:      java-1.7.0-openjdk-devel
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
