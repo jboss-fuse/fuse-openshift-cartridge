@@ -18,13 +18,13 @@ url for hawtio.
 
 If you prefer to specify your own password (which can be handy in development to reuse the same password across fabrics) try this:
 
-    rhc create-app -e OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=admin fuse https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/master/metadata/manifest.yml
+    rhc create-app -e OPENSHIFT_FUSE_PASSWORD=password fuse https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/master/metadata/manifest.yml
 
-You probably want to use a safer password than 'admin' though ;)
+You probably want to use a safer password than 'password' though ;)
 
 If you have a subscription for Openshift that gives you access to other gear sizes, you could run 
 
-    rhc create-app -g medium -e OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=admin fuse https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/master/metadata/manifest.yml
+    rhc create-app -g medium -e OPENSHIFT_FUSE_PASSWORD=password fuse https://raw.github.com/jboss-fuse/fuse-openshift-cartridge/master/metadata/manifest.yml
     
 That will create the container in an Openshift gear of the specified size.
 
