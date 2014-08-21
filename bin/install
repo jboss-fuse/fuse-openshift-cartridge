@@ -120,7 +120,7 @@ echo "felix.threading.timeout=0" >> container/etc/config.properties
 
 # Retrieve password
 if [ ! -z "${OPENSHIFT_FUSE_PASSWORD:-}" ]; then
-    if [ ${#OPENSHIFT_FUSE_PASSWORD} -gte 6 ]
+    if [ ${#OPENSHIFT_FUSE_PASSWORD} -gte 6 ]; then
       client_result "Using provided password from cartridge"
     else
       client_error "Command Failed: provided password must be at least 6 characters"
