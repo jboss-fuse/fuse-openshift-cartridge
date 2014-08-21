@@ -15,20 +15,32 @@ function start() {
   fi
 }
 
+
+
 function stop() {
     if [ -f $FUSE_PID_FILE ]; then
         PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
+        
+        # Lets first try a graceful stop.
         ${FUSE_BIN_DIR}/stop
-        for i in {1..20};
-            do
-                if ps -p $PID > /dev/null; then
-                    echo "${OPENSHIFT_APP_NAME} has been successfully stopped"
-                    rm $FUSE_PID_FILE
-                    break
-                else
-                    sleep 3
-                fi
-            done
+        wait_for_stop $PID 20
+
+        # if process has not stopped.. lets get a little more agressive.. 
+        if ! ps -p $PID > /dev/null; then
+          client_message "${OPENSHIFT_APP_NAME} did not stop after 20 seconds, running a kill"
+          kill $PID
+          wait_for_stop $PID 20
+          # if process has not stopped.. lets get really agressive.. 
+          if ! ps -p $PID > /dev/null; then
+            client_message "${OPENSHIFT_APP_NAME} did not stop after 20 seconds, running a kill -9"
+            kill -9 $PID
+            wait_for_stop $PID 20
+            if ! ps -p $PID> /dev/null; then
+              client_error "Command Failed: Could not stop the ${OPENSHIFT_APP_NAME} application."
+            fi
+          fi
+        fi
+
         client_result "Stopped ${OPENSHIFT_APP_NAME}"
     else
          echo "${OPENSHIFT_APP_NAME} was stopped already"
@@ -77,6 +89,17 @@ function is_running() {
       rm $FUSE_PID_FILE
       return 1
    fi
+}
+
+function wait_for_stop() {
+    for i in {1..$2}; do
+        if ps -p $1 > /dev/null; then
+            rm $FUSE_PID_FILE
+            break
+        else
+            sleep 1
+        fi
+    done  
 }
 
 function wait_for_start() {
