@@ -15,13 +15,13 @@ This will output the generated user-id/password, http management url and public 
 
 If you prefer to specify your own password (which can be handy in development to reuse the same password across fabrics) try this:
 
-    rhc create-app -e OPENSHIFT_AMQ_PASSWORD=admin amq http://is.gd/Q5ihum
+    rhc create-app -e OPENSHIFT_FUSE_PASSWORD=password amq http://is.gd/Q5ihum
 
-You probably want to use a safer password than 'admin' though ;)
+You probably want to use a safer password than 'password' though ;)
 
 If you have a subscription for Openshift that gives you access to other gear sizes, you could run 
 
-    rhc create-app -g medium -e OPENSHIFT_AMQ_PASSWORD=admin amq http://is.gd/Q5ihum
+    rhc create-app -g medium -e OPENSHIFT_FUSE_PASSWORD=password amq http://is.gd/Q5ihum
 
 That will create the container in an Openshift gear of the specified size.
 

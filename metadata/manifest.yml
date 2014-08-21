@@ -25,9 +25,9 @@ Cart-Data:
   - Key: OPENSHIFT_AMQ_ZOOKEEPER_URL
     Type: environment
     Description: "The url to zookeeper."
-  - Key: OPENSHIFT_AMQ_ZOOKEEPER_PASSWORD
+  - Key: OPENSHIFT_FUSE_PASSWORD
     Type: environment
-    Description: "The zookeeper password."
+    Description: "The password password to the app."
   - Key: MAVEN_UPLOAD_URL
     Type: environment
     Description: "The url to the fabric maven proxy."

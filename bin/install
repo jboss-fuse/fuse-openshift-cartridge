@@ -105,11 +105,11 @@ rm -rf openshift-aerogear-pushserver
 cd $OPENSHIFT_FUSE_DIR
 
 # Remove some default service configs since we don't need to boot up in full ESB mode.
-rm container/etc/org.apache.aries.transaction.cfg || :
-rm container/etc/org.apache.servicemix.jbi.cfg || :
-rm container/etc/org.apache.servicemix.nmr.cfg || :
-rm container/etc/org.fusesource.mq.fabric.server-default.cfg || :
-rm container/etc/activemq.xml || :
+rm container/etc/org.apache.aries.transaction.cfg 2> /dev/null || :
+rm container/etc/org.apache.servicemix.jbi.cfg 2> /dev/null || :
+rm container/etc/org.apache.servicemix.nmr.cfg 2> /dev/null || :
+rm container/etc/org.fusesource.mq.fabric.server-default.cfg 2> /dev/null || :
+rm container/etc/activemq.xml 2> /dev/null || :
 
 # Append shutdown configuration
 echo "" >> container/etc/config.properties
@@ -117,29 +117,33 @@ echo "karaf.shutdown.host=${OPENSHIFT_FUSE_IP}" >> container/etc/config.properti
 echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/config.properties
 # Limit the maximum number of created threads
 echo "felix.threading.timeout=0" >> container/etc/config.properties
-client_result "Setting up fabric container"
 
 # Retrieve password
-if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD:-}" ]; then
-    client_result "Using provided password from cartridge"
-elif [ ! -z "${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD:-}" ]; then
+if [ ! -z "${OPENSHIFT_FUSE_PASSWORD:-}" ]; then
+    if [ ${#OPENSHIFT_FUSE_PASSWORD} -gte 6 ]
+      client_result "Using provided password from cartridge"
+    else
+      client_error "Command Failed: provided password must be at least 6 characters"
+    fi
+elif [ ! -z "${OPENSHIFT_FUSE_DOMAIN_PASSWORD:-}" ]; then
     client_result "Using provided password from domain"
-    export OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD}
-    set_env_var OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" env
+    export OPENSHIFT_FUSE_PASSWORD=${OPENSHIFT_FUSE_DOMAIN_PASSWORD}
+    set_env_var OPENSHIFT_FUSE_PASSWORD "${OPENSHIFT_FUSE_PASSWORD}" env
 else
     # generate password and setup env vars
     client_result "Generating password"
-    export OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD=$(generate_password)
-    set_env_var OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" env
+    export OPENSHIFT_FUSE_PASSWORD=$(generate_password)
+    set_env_var OPENSHIFT_FUSE_PASSWORD "${OPENSHIFT_FUSE_PASSWORD}" env
 fi
+
 # Store password
-echo "admin=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD},admin" > $FUSE_USRPROPS_FILE
-echo "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" > $FUSE_PASSWD_FILE
-echo "zookeeper.password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" >> $FUSE_SYSPROPS_FILE
+echo "admin=${OPENSHIFT_FUSE_PASSWORD},admin" > $FUSE_USRPROPS_FILE
+echo "${OPENSHIFT_FUSE_PASSWORD}" > $FUSE_PASSWD_FILE
+echo "zookeeper.password=${OPENSHIFT_FUSE_PASSWORD}" >> $FUSE_SYSPROPS_FILE
+
 
 # Trust even self signed certs since OS gives us a self signed cert.
 # echo "javax.net.ssl.trustAll=true" >> $FUSE_SYSPROPS_FILE
-
 FUSE_CERT=""
 
 # Configure to join an existing fabric
@@ -167,8 +171,8 @@ else
     # Lets create a self signed cert for SSL
     FUSE_KEYSTORE_FILE="$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/default/keystore.jks"
     FUSE_CERT_FILE="$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/default/keystore.cert"
-    keytool -genkey -storetype JKS -storepass "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" -keystore "${FUSE_KEYSTORE_FILE}" -keypass "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=${OPENSHIFT_GEAR_DNS}" -validity 3650
-    keytool -exportcert -keystore "${FUSE_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}" --rfc > "${FUSE_CERT_FILE}"
+    keytool -genkey -storetype JKS -storepass "${OPENSHIFT_FUSE_PASSWORD}" -keystore "${FUSE_KEYSTORE_FILE}" -keypass "${OPENSHIFT_FUSE_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=${OPENSHIFT_GEAR_DNS}" -validity 3650
+    keytool -exportcert -keystore "${FUSE_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_FUSE_PASSWORD}" --rfc > "${FUSE_CERT_FILE}"
     FUSE_CERT=`cat "${FUSE_CERT_FILE}"`
     
     # We need to create a broker profile that match the what mq-create would generate:
@@ -195,9 +199,9 @@ client_result "Application ${OPENSHIFT_APP_NAME} created successfully.  Please m
 client_result ""
 client_result "   Console URL:        ${OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL}"
 client_result "   Console User:       admin"
-client_result "   Console Password:   ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
+client_result "   Console Password:   ${OPENSHIFT_FUSE_PASSWORD}"
 client_result "   Zookeeper URL:      ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
-client_result "   Zookeeper Password: ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
+client_result "   Zookeeper Password: ${OPENSHIFT_FUSE_PASSWORD}"
 if [ ! -z "${FUSE_CERT:-}" ]; then
 client_result "   SSL Certificate:    " 
 client_result ""
@@ -211,17 +215,17 @@ client_result ""
 fi
 
 cart_props "username=admin"
-cart_props "password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
+cart_props "password=${OPENSHIFT_FUSE_PASSWORD}"
 
 if $join; then
     ${FUSE_BIN_DIR}/start
     wait_for_start
     # Create a broker profile on using the ZK server since it should be up and running.
-    ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_SSH_IP} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "fabric:mq-create ${OPENSHIFT_APP_NAME}"    
-    ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"
-    ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
+    ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_SSH_IP} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:mq-create ${OPENSHIFT_APP_NAME}"    
+    ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"
+    ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
     # Add the broker profile to the container.
-    ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_SSH_IP} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "fabric:container-add-profile ${OPENSHIFT_APP_NAME} mq-broker-default.${OPENSHIFT_APP_NAME}"
+    ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_SSH_IP} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:container-add-profile ${OPENSHIFT_APP_NAME} mq-broker-default.${OPENSHIFT_APP_NAME}"
     client_result ""
     client_result "WARNING: Creating fabric containers directly from"
     client_result "         openshift is supported in a limited way"
@@ -231,5 +235,5 @@ else
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_SSH_IP=${OPENSHIFT_FUSE_IP}"
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_SSH_PORT=${OPENSHIFT_FUSE_SSH_PORT}"
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
-    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_PASSWORD=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
+    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_PASSWORD=${OPENSHIFT_FUSE_PASSWORD}"
 fi
