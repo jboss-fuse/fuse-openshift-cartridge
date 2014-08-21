@@ -7,11 +7,11 @@ FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
 
 function start() {
   if is_running; then
-    client_message "Fuse cart already started"
+    client_message "${OPENSHIFT_APP_NAME} already started"
   else  
     ${FUSE_BIN_DIR}/start
     wait_for_start    
-    client_message "Started Fuse cart"
+    client_message "Started application"
   fi
 }
 
@@ -22,16 +22,16 @@ function stop() {
         for i in {1..20};
             do
                 if ps -p $PID > /dev/null; then
-                    echo "Fabric has been successfully stopped"
+                    echo "${OPENSHIFT_APP_NAME} has been successfully stopped"
                     rm $FUSE_PID_FILE
                     break
                 else
                     sleep 3
                 fi
             done
-        client_result "Stopped Fuse cart"
+        client_result "Stopped ${OPENSHIFT_APP_NAME}"
     else
-         echo "Fuse cart was stopped already"
+         echo "${OPENSHIFT_APP_NAME} was stopped already"
     fi
 }
 
@@ -44,14 +44,14 @@ function restart() {
 
 function status() {
    if is_running; then
-      client_result "Application is running"
+      client_result "${OPENSHIFT_APP_NAME} is running"
    else
-      client_result "Application is either stopped or inaccessible"
+      client_result "${OPENSHIFT_APP_NAME} is either stopped or inaccessible"
    fi
 }
 
 function reload() {
-    client_message "Reloading Fuse cart"
+    client_message "Reloading app ${OPENSHIFT_APP_NAME}"
     restart
 }
 
@@ -99,12 +99,24 @@ function wait_for_start() {
            fi
      done
      if ps -p $PID > /dev/null; then
-        client_result "Fabric($PID) is started successfully"
+       retries=18
+       fabric_loaded=0
+       while [ ! $fabric_loaded && $retries -gt 0 ]; do
+          curl -s http://admin:${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/CurrentContainerName | grep '"status":200' > /dev/null
+          [ $? -eq 0 ] && fabric_loaded=1 && break
+          let retries=$retries-1
+          sleep 5
+       done
+       if [ $fabric_loaded -eq 1 ]; then
+         client_result "${OPENSHIFT_APP_NAME} ($PID) is started successfully"
+       else
+         client_error "Command Failed: Could not reach ${OPENSHIFT_APP_NAME} console."
+       fi
      else
-       client_error "Command Failed: Fuse process ($PID) is not running"
+       client_error "Command Failed: ${OPENSHIFT_APP_NAME} ($PID) is not running"
      fi
    else
-    client_error "Command Failed:Could not find Fuse instance.properties"
+    client_error "Command Failed: Could not find instance.properties"
    fi
 }
 
@@ -114,15 +126,15 @@ function deploy() {
 
 function fabric_shell() {
  password=`cat ${FUSE_PASSWD_FILE}`
- client_message "Connnecting to Fuse shell using: ${password}"
+ client_message "Connnecting to shell using: ${password}"
  ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} $*
 }
 
 function threaddump() {
-  echo "Thread dump for Fuse cartridge"
+  echo "Thread dump for the application"
 
     if ! is_running; then
-        echo "Application is stopped"
+        echo "${OPENSHIFT_APP_NAME} is stopped"
     elif [ -f "$FUSE_PID_FILE" ]; then
         pid=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
         jstack -l $pid > $OPENSHIFT_FUSE_LOG_DIR/threaddump.log
@@ -130,7 +142,7 @@ function threaddump() {
         client_result ""
         client_result "The thread dump file will be available via: rhc tail $OPENSHIFT_APP_NAME -g $OPENSHIFT_GEAR_UUID -f ${OPENSHIFT_FUSE_LOG_DIR}threaddump.log -o '-n 250'"
     else 
-        echo "Failed to locate Fuse PID File"
+        echo "Failed to locate the PID File"
     fi
 }
 
