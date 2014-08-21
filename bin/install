@@ -156,6 +156,8 @@ elif  [ ! -z "${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL:-}" ]; then
 else
     # Additional system properties
     client_result "Configuring zookeeper server"
+    export OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL="https://${OPENSHIFT_GEAR_DNS}"
+    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL=${OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL}"
     export OPENSHIFT_FUSE_ZOOKEEPER_URL=${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}
     set_env_var OPENSHIFT_FUSE_ZOOKEEPER_URL "${OPENSHIFT_FUSE_ZOOKEEPER_URL}" env
     replace_property_value ensemble.auto.start true $FUSE_SYSPROPS_FILE
@@ -189,20 +191,24 @@ EOF
 fi
 
 client_result ""
-client_result "Fuse created successfully.  Please make note of these credentials:"
+client_result "Application ${OPENSHIFT_APP_NAME} created successfully.  Please make note of these credentials:"
 client_result ""
-client_result "   Console URL:        http://${OPENSHIFT_GEAR_DNS}"
+client_result "   Console URL:        ${OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL}"
 client_result "   Console User:       admin"
 client_result "   Console Password:   ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
 client_result "   Zookeeper URL:      ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
 client_result "   Zookeeper Password: ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
 if [ ! -z "${FUSE_CERT:-}" ]; then
-client_result "   SSL self signed certificate: " 
+client_result "   SSL Certificate:    " 
+client_result ""
 client_result "${FUSE_CERT}"
 fi
+
+if ! $join; then
 client_result ""
-client_result "   The Fuse Management Console will be available shortly at: http://${OPENSHIFT_GEAR_DNS}"
+client_result "   The management console will be available shortly at: ${OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL}"
 client_result ""
+fi
 
 cart_props "username=admin"
 cart_props "password=${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
@@ -216,6 +222,7 @@ if $join; then
     ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
     # Add the broker profile to the container.
     ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_SSH_IP} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD} "fabric:container-add-profile ${OPENSHIFT_APP_NAME} mq-broker-default.${OPENSHIFT_APP_NAME}"
+    client_result ""
     client_result "WARNING: Creating fabric containers directly from"
     client_result "         openshift is supported in a limited way"
     client_result "         as such containers can not be fully managed"
