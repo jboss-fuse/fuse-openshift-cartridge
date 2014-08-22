@@ -1,12 +1,12 @@
 %global cartridgedir %{_libexecdir}/openshift/cartridges/fuse
 %global frameworkdir %{_libexecdir}/openshift/cartridges/fuse
 
-%global product_build_number 389
+%global product_build_number 390
 %global github_tag openshift-enterprise-fuse-rpm-6.1
 
 Name: openshift-origin-cartridge-fuse
 Version: 6.1.0.redhat.%{product_build_number}
-Release: 2%{?dist}
+Release: 1%{?dist}
 Summary: Fuse cartridge
 Group: Development/Languages
 License: ASL 2.0
