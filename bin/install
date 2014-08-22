@@ -28,12 +28,28 @@ function wait_for_start() {
            fi
      done
      if ps -p $PID > /dev/null; then
-       client_result "Fabric($PID) is started successfully"
+       if [ $1 == "wait-for-fabric"] ; then
+         retries=18
+         fabric_loaded=0
+         while [ ! $fabric_loaded && $retries -gt 0 ]; do
+            curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/CurrentContainerName | grep '"status":200' > /dev/null
+            [ $? -eq 0 ] && fabric_loaded=1 && break
+            let retries=$retries-1
+            sleep 5
+         done
+         if [ $fabric_loaded -eq 1 ]; then
+           client_result "${OPENSHIFT_APP_NAME} ($PID) is started successfully"
+         else
+           client_error "Command Failed: Could not reach ${OPENSHIFT_APP_NAME} console."
+         fi
+       else
+         client_result "${OPENSHIFT_APP_NAME} ($PID) is started successfully"
+       fi
      else
-       client_error "Command Failed: Fuse process ($PID) is not running"
+       client_error "Command Failed: ${OPENSHIFT_APP_NAME} ($PID) is not running"
      fi
    else
-    client_error "Command Failed:Could not find Fuse instance.properties"
+    client_error "Command Failed: Could not find instance.properties"
    fi
 }
 
@@ -61,7 +77,7 @@ case "$1" in
 esac
 echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
 
-#Extract the Fuse Fabric Distribution
+#Extract the distro
 cd $OPENSHIFT_FUSE_DIR
 
 mkdir $OPENSHIFT_FUSE_DIR/container
@@ -199,9 +215,9 @@ fi
 cart_props "username=admin"
 cart_props "password=${OPENSHIFT_FUSE_PASSWORD}"
 
+${FUSE_BIN_DIR}/start
 if $join; then
-    ${FUSE_BIN_DIR}/start
-    wait_for_start    
+    wait_for_start
     ${FUSE_BIN_DIR}/client -r 3 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"
     ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
     client_result ""
@@ -210,6 +226,7 @@ if $join; then
     client_result "         as such containers can not be fully managed"
     client_result "         by fabric."
 else
+    wait_for_start 'wait-for-fabric'
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_SSH_IP=${OPENSHIFT_FUSE_IP}"
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_SSH_PORT=${OPENSHIFT_FUSE_SSH_PORT}"
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
