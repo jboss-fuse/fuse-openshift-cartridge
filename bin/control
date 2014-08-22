@@ -144,7 +144,13 @@ function wait_for_start() {
 }
 
 function deploy() {
-  fabric_shell "fabric:import ${OPENSHIFT_REPO_DIR}/.openshift/config/profiles"
+  client_message "Please use the fabric git repo instead of the OS application git repo:"
+  client_message ""
+  client_message "  git clone -b 1.0 http://admin:${OPENSHIFT_FUSE_DOMAIN_PASSWORD}@${OPENSHIFT_FUSE_DOMAIN_DNS}/git/fabric"
+  client_message ""
+  
+  
+  # fabric_shell "fabric:import ${OPENSHIFT_REPO_DIR}/.openshift/config/profiles"
 }
 
 function fabric_shell() {
