@@ -1,12 +1,12 @@
 %global cartridgedir %{_libexecdir}/openshift/cartridges/amq
 %global frameworkdir %{_libexecdir}/openshift/cartridges/amq
 
-%global product_build_number 389
+%global product_build_number 390
 %global github_tag openshift-enterprise-amq-rpm-6.1
 
 Name: openshift-origin-cartridge-amq
 Version: 6.1.0.redhat.%{product_build_number}
-Release: 3%{?dist}
+Release: 1%{?dist}
 Summary: A-MQ cartridge
 Group: Development/Languages
 License: ASL 2.0
