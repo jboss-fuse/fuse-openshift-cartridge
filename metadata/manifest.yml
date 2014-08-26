@@ -69,7 +69,7 @@ Group-Overrides:
   - components:
     - web-proxy
 Endpoints:
-  
+
   #
   # The Main HTTP port for the app.
   #
@@ -116,6 +116,11 @@ Endpoints:
     Private-Port-Name: MQTT_PORT
     Private-Port:      31343
     Public-Port-Name:  MQTT_PROXY_PORT
+    Options:           { "ssl_to_gear": true }
+  - Private-IP-Name:   IP
+    Private-Port-Name: REPLICATION_PORT
+    Private-Port:      31353
+    Public-Port-Name:  REPLICATION_PROXY_PORT
     Options:           { "ssl_to_gear": true }
 
   # Elastic Search Ports
@@ -198,7 +203,7 @@ Endpoints:
     Mappings:
     - Frontend: 'TLS_PORT_5'
       Backend: ''
-      
+
   - Private-IP-Name:   IP
     Private-Port-Name: APP_TLS_PORT_1
     Private-Port:      4001
@@ -223,7 +228,7 @@ Endpoints:
     Mappings:
     - Frontend: 'TLS_PORT_8'
       Backend: ''
-      
+
   #
   # Ports private to the gear
   #
