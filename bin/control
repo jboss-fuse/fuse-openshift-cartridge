@@ -71,6 +71,7 @@ function tidy() {
   client_message "Emptying log dir: $OPENSHIFT_FUSE_LOG_DIR"
   shopt -s dotglob
   rm -rf $OPENSHIFT_FUSE_LOG_DIR/*
+  truncate -s0 $OPENSHIFT_FUSE_DIR/container/data/log/karaf.log
 }
 
 function is_running() {
