@@ -72,6 +72,7 @@ function tidy() {
   shopt -s dotglob
   rm -rf $OPENSHIFT_FUSE_LOG_DIR/*
   truncate -s0 $OPENSHIFT_FUSE_DIR/container/data/log/karaf.log
+  rm -f $OPENSHIFT_FUSE_DIR/container/data/log/karaf.log.*
 }
 
 function is_running() {
