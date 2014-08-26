@@ -41,15 +41,18 @@ function wait_for_start() {
            client_result "${OPENSHIFT_APP_NAME} ($PID) is started successfully"
          else
            client_error "Command Failed: Could not reach ${OPENSHIFT_APP_NAME} console."
+           exit 1
          fi
        else
          client_result "${OPENSHIFT_APP_NAME} ($PID) is started successfully"
        fi
      else
        client_error "Command Failed: ${OPENSHIFT_APP_NAME} ($PID) is not running"
+       exit 1
      fi
    else
     client_error "Command Failed: Could not find instance.properties"
+    exit 1
    fi
 }
 
@@ -136,10 +139,11 @@ echo "felix.threading.timeout=0" >> container/etc/config.properties
 
 # Retrieve password
 if [ ! -z "${OPENSHIFT_FUSE_PASSWORD:-}" ]; then
-    if [ ${#OPENSHIFT_FUSE_PASSWORD} -gte 6 ]; then
+    if [ ${#OPENSHIFT_FUSE_PASSWORD} -gt 5 ]; then
       client_result "Using provided password from cartridge"
     else
       client_error "Command Failed: provided password must be at least 6 characters"
+      exit 1
     fi
 elif [ ! -z "${OPENSHIFT_FUSE_DOMAIN_PASSWORD:-}" ]; then
     client_result "Using provided password from domain"
