@@ -118,7 +118,7 @@ rm -rf gateway-haproxy gateway-http gateway-mq
 rm -rf hadoop-base hadoop-datanode hadoop-namenode
 # rm -rf insight insight-camel insight-core insight-hdfs insight-jetty insight-kibana
 rm -rf jboss-brms-controller-tomcat jboss-brms-controller-wildfly jboss-brms-feature-workbench jboss-brms-feature-workbench.openshift
-rm -rf mq-replicated
+# rm -rf mq-replicated
 rm -rf openshift-aerogear-pushserver
 
 cd $OPENSHIFT_FUSE_DIR

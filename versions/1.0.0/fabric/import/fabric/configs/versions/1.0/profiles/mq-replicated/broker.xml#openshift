@@ -57,8 +57,8 @@
               zkPath="/fabric/registry/clusters/fusemq-replication-elections/${group}"
               securityToken="${zookeeper.password}"
               container="${container.id}"
-              bind="tcp://${bind.address}:${OPENSHIFT_FUSE_APP_PORT_1}"
-              connectUrl="tcp://${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_APP_PORT_1_PROXY_PORT}"
+              bind="tcp://${bind.address}:${OPENSHIFT_FUSE_REPLICATION_PORT}"
+              connectUrl="tcp://${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_REPLICATION_PROXY_PORT}"
               />
         </persistenceAdapter>
 
