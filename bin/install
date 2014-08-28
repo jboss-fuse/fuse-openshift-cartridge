@@ -138,6 +138,9 @@ echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/conf
 echo "felix.threading.timeout=0" >> container/etc/config.properties
 
 # Retrieve password
+if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD:-}" ]; then
+    OPENSHIFT_FUSE_PASSWORD="${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
+fi
 if [ ! -z "${OPENSHIFT_FUSE_PASSWORD:-}" ]; then
     if [ ${#OPENSHIFT_FUSE_PASSWORD} -gt 5 ]; then
       client_result "Using provided password from cartridge"
@@ -240,6 +243,7 @@ cart_props "password=${OPENSHIFT_FUSE_PASSWORD}"
 ${FUSE_BIN_DIR}/start
 if $join; then
     wait_for_start
+
     # Create a broker profile on using the ZK server since it should be up and running.
     ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_DNS} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:mq-create ${OPENSHIFT_APP_NAME}"    
     ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"
