@@ -140,6 +140,10 @@ echo "felix.threading.timeout=0" >> container/etc/config.properties
 # Retrieve password
 if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD:-}" ]; then
     OPENSHIFT_FUSE_PASSWORD="${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
+elif [ -z "${OPENSHIFT_FUSE_PASSWORD:-}" ]; then
+  if [ ! -z "${OPENSHIFT_AMQ_PASSWORD:-}" ]; then
+      OPENSHIFT_FUSE_PASSWORD="${OPENSHIFT_AMQ_PASSWORD}"
+  fi
 fi
 if [ ! -z "${OPENSHIFT_FUSE_PASSWORD:-}" ]; then
     if [ ${#OPENSHIFT_FUSE_PASSWORD} -gt 5 ]; then
