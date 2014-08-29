@@ -33,6 +33,7 @@ A-MQ cartridge for openshift.
 %build
 unzip %SOURCE1
 mv jboss-a-mq-* usr
+mkdir patches
 
 %install
 rm -rf %{buildroot}
