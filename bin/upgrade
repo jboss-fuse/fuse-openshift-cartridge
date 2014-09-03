@@ -47,10 +47,14 @@ if [ -d $FUSE_PATCH_DIR ]; then
         client_message "Patching all profile versions with ${i}"
 
         ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} "fabric:patch-apply --all-versions file:${i}"
-
-        # only want to apply patches once
-        rm $i
-        touch "${i}.applied"
+        if [ "$?" -eq 0 ]; then
+          # only want to apply successful patches once
+          rm $i
+          touch "${i}.applied"
+        else
+          client_message "Patch was not succesfully applied. You can try to apply this patch again on the container shell using: "
+          client_message "fabric:patch-apply --all-versions file:${i}"
+        fi
       fi
     done
   else
