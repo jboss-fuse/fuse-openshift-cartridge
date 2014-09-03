@@ -229,10 +229,8 @@ client_result "   Console User:       admin"
 client_result "   Console Password:   ${OPENSHIFT_FUSE_PASSWORD}"
 client_result "   Zookeeper URL:      ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
 client_result "   Zookeeper Password: ${OPENSHIFT_FUSE_PASSWORD}"
-if [ ! -z "${FUSE_CERT:-}" ]; then
-client_result "   SSL Certificate:    " 
-client_result ""
-client_result "${FUSE_CERT}"
+if [ ! -z "${FUSE_CERT_FILE:-}" ]; then
+  client_result "   SSL Certificate URL: https://${OPENSHIFT_APP_DNS}/hawtio/index.html#/wiki/branch/1.0/view/fabric/profiles/default.profile/keystore.cert"
 fi
 
 if ! $join; then
