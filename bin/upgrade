@@ -49,7 +49,8 @@ if [ -d $FUSE_PATCH_DIR ]; then
         ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} "fabric:patch-apply --all-versions file:${i}"
 
         # only want to apply patches once
-        mv $i "${i}.applied"
+        rm $i
+        touch "${i}.applied"
       fi
     done
   else
