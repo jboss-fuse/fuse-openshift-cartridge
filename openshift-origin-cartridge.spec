@@ -31,7 +31,7 @@ Fuse cartridge for openshift.
 %build
 unzip %SOURCE1
 mv jboss-fuse-* usr
-mkdir patches
+mkdir -p patches
 
 %install
 rm -rf %{buildroot}
