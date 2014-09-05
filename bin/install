@@ -226,6 +226,8 @@ if $join; then
     ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"
     ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
 
+    wait_for_start 'wait-for-fabric'
+
     # apply any patches we have in patches dir to the booted GA distro
     ${OPENSHIFT_FUSE_DIR}/bin/upgrade
 
