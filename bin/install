@@ -254,6 +254,8 @@ if $join; then
     # Add the broker profile to the container.
     ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_DNS} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:container-add-profile ${OPENSHIFT_APP_NAME} mq-broker-default.${OPENSHIFT_APP_NAME}"
 
+    wait_for_start 'wait-for-fabric'
+
     # apply any patches we have in patches dir to the booted GA distro
     ${OPENSHIFT_FUSE_DIR}/bin/upgrade
 
