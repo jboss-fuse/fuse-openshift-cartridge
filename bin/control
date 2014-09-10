@@ -186,6 +186,9 @@ case "$1" in
   stop)      stop ;;
   restart)   restart ;;
   status)    status ;;
+  pre-snapshot)  
+    sleep 5
+    ;;
   reload)    reload ;;
   tidy)      tidy ;;
   threaddump)      threaddump ;;
