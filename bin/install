@@ -38,13 +38,13 @@ function wait_for_start() {
             sleep 5
          done         
          if [ $fabric_loaded -eq 1 ]; then
-           client_result "${OPENSHIFT_APP_NAME} ($PID) is started successfully"
+           client_result ""
          else
            client_error "Command Failed: Could not reach ${OPENSHIFT_APP_NAME} console."
            exit 1
          fi
        else
-         client_result "${OPENSHIFT_APP_NAME} ($PID) is started successfully"
+         client_result ""
        fi
      else
        client_error "Command Failed: ${OPENSHIFT_APP_NAME} ($PID) is not running"
@@ -170,7 +170,10 @@ echo "zookeeper.password=${OPENSHIFT_FUSE_PASSWORD}" >> $FUSE_SYSPROPS_FILE
 
 
 # Trust even self signed certs since OS gives us a self signed cert.
-# echo "javax.net.ssl.trustAll=true" >> $FUSE_SYSPROPS_FILE
+echo "javax.net.ssl.trustAll=true" >> $FUSE_SYSPROPS_FILE
+# Enable the openshift port mapper
+echo "org.fusesource.common.util.PublicPortMapper=openshift" >> $FUSE_SYSPROPS_FILE
+
 FUSE_CERT=""
 
 # Configure to join an existing fabric
@@ -178,17 +181,25 @@ join=false
 if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
     client_result "Using provided url from cartridge"
     echo "zookeeper.url=$OPENSHIFT_FUSE_ZOOKEEPER_URL" >> $FUSE_SYSPROPS_FILE
+
+    # are we the first gear created against an external fuse zk server.
+    if [ -z "${OPENSHIFT_FUSE_DOMAIN_DNS:-}" ]; then 
+      OPENSHIFT_FUSE_DOMAIN_DNS=${OPENSHIFT_FUSE_EXTERNAL_DNS}
+      OPENSHIFT_FUSE_DOMAIN_SSH_PORT=${OPENSHIFT_FUSE_EXTERNAL_SSH_PORT}
+      add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_DNS=${OPENSHIFT_FUSE_DOMAIN_DNS}"
+      add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_SSH_PORT=${OPENSHIFT_FUSE_DOMAIN_SSH_PORT}"    
+      add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
+      add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_PASSWORD=${OPENSHIFT_FUSE_PASSWORD}"    
+    fi 
+    
 elif  [ ! -z "${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL:-}" ]; then
     client_result "Using provided url from domain"
     export OPENSHIFT_FUSE_ZOOKEEPER_URL=${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL}
     set_env_var OPENSHIFT_FUSE_ZOOKEEPER_URL "${OPENSHIFT_FUSE_ZOOKEEPER_URL}" env
     join=true
-# Turn into a fabric root container
 else
     # Additional system properties
     client_result "Configuring zookeeper server"
-    export OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL="https://${OPENSHIFT_GEAR_DNS}"
-    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL=${OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL}"
     export OPENSHIFT_FUSE_ZOOKEEPER_URL=${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}
     set_env_var OPENSHIFT_FUSE_ZOOKEEPER_URL "${OPENSHIFT_FUSE_ZOOKEEPER_URL}" env
     replace_property_value ensemble.auto.start true $FUSE_SYSPROPS_FILE
@@ -219,23 +230,31 @@ group = default
 kind = MasterSlave
 EOF
 
+    OPENSHIFT_FUSE_DOMAIN_DNS=${OPENSHIFT_GEAR_DNS}
+    OPENSHIFT_FUSE_DOMAIN_SSH_PORT=${OPENSHIFT_FUSE_SSH_PROXY_PORT}
+    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_DNS=${OPENSHIFT_FUSE_DOMAIN_DNS}"
+    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_SSH_PORT=${OPENSHIFT_FUSE_DOMAIN_SSH_PORT}"
+    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
+    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_PASSWORD=${OPENSHIFT_FUSE_PASSWORD}"    
 fi
+
+OPENSHIFT_FUSE_CONSOLE_URL="https://${OPENSHIFT_FUSE_DOMAIN_DNS}"
 
 client_result ""
 client_result "Application ${OPENSHIFT_APP_NAME} created successfully.  Please make note of these credentials:"
 client_result ""
-client_result "   Console URL:        ${OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL}"
+client_result "   Console URL:        ${OPENSHIFT_FUSE_CONSOLE_URL}"
 client_result "   Console User:       admin"
 client_result "   Console Password:   ${OPENSHIFT_FUSE_PASSWORD}"
 client_result "   Zookeeper URL:      ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
 client_result "   Zookeeper Password: ${OPENSHIFT_FUSE_PASSWORD}"
 if [ ! -z "${FUSE_CERT_FILE:-}" ]; then
-  client_result "   SSL Certificate URL: https://${OPENSHIFT_APP_DNS}/hawtio/index.html#/wiki/branch/1.0/view/fabric/profiles/default.profile/keystore.cert"
+  client_result "   SSL Certificate URL: ${OPENSHIFT_FUSE_CONSOLE_URL}/hawtio/index.html#/wiki/branch/1.0/view/fabric/profiles/default.profile/keystore.cert"
 fi
 
 if ! $join; then
 client_result ""
-client_result "   The management console will be available shortly at: ${OPENSHIFT_FUSE_DOMAIN_CONSOLE_URL}"
+client_result "   The management console will be available shortly at: ${OPENSHIFT_FUSE_CONSOLE_URL}"
 client_result ""
 fi
 
@@ -245,18 +264,15 @@ cart_props "password=${OPENSHIFT_FUSE_PASSWORD}"
 ${FUSE_BIN_DIR}/start
 if $join; then
     wait_for_start
-
-    # Create a broker profile on using the ZK server since it should be up and running.
-    ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_DNS} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:mq-create ${OPENSHIFT_APP_NAME}"    
     ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"
     ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
 
-    # Add the broker profile to the container.
+    # Create a broker profile on using the ZK server since it should be up and running.
+    ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_DNS} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:mq-create ${OPENSHIFT_APP_NAME}"    
     ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_DNS} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:container-add-profile ${OPENSHIFT_APP_NAME} mq-broker-default.${OPENSHIFT_APP_NAME}"
 
-    wait_for_start 'wait-for-fabric'
-
     # apply any patches we have in patches dir to the booted GA distro
+    wait_for_start 'wait-for-fabric'
     ${OPENSHIFT_FUSE_DIR}/bin/upgrade
 
     client_result ""
@@ -266,8 +282,4 @@ if $join; then
     client_result "         by fabric."
 else
     wait_for_start 'wait-for-fabric'
-    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_DNS=${OPENSHIFT_GEAR_DNS}"
-    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_SSH_PORT=${OPENSHIFT_FUSE_SSH_PROXY_PORT}"
-    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
-    add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_PASSWORD=${OPENSHIFT_FUSE_PASSWORD}"
 fi
