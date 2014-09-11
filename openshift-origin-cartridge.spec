@@ -1,7 +1,7 @@
+%global product_build_number 394
+
 %global cartridgedir %{_libexecdir}/openshift/cartridges/fuse
 %global frameworkdir %{_libexecdir}/openshift/cartridges/fuse
-
-%global product_build_number 391
 %global github_tag openshift-enterprise-fuse-rpm-6.1
 
 Name: openshift-origin-cartridge-fuse
