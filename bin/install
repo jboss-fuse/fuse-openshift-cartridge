@@ -209,7 +209,7 @@ else
     # Lets create a self signed cert for SSL
     FUSE_KEYSTORE_FILE="$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/default/keystore.jks"
     FUSE_CERT_FILE="$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/default/keystore.cert"
-    keytool -genkey -storetype JKS -storepass "${OPENSHIFT_FUSE_PASSWORD}" -keystore "${FUSE_KEYSTORE_FILE}" -keypass "${OPENSHIFT_FUSE_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=${OPENSHIFT_GEAR_DNS}" -validity 3650
+    keytool -genkey -storetype JKS -storepass "${OPENSHIFT_FUSE_PASSWORD}" -keystore "${FUSE_KEYSTORE_FILE}" -keypass "${OPENSHIFT_FUSE_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=*-${OPENSHIFT_NAMESPACE}.${OPENSHIFT_CLOUD_DOMAIN}" -validity 3650
     keytool -exportcert -keystore "${FUSE_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_FUSE_PASSWORD}" --rfc > "${FUSE_CERT_FILE}"
     FUSE_CERT=`cat "${FUSE_CERT_FILE}"`
     
