@@ -1,6 +1,7 @@
+%global product_build_number 394
+
 %global cartridgedir %{_libexecdir}/openshift/cartridges/amq
 %global frameworkdir %{_libexecdir}/openshift/cartridges/amq
-
 %global product_build_number 391
 %global github_tag openshift-enterprise-amq-rpm-6.1
 
