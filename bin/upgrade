@@ -40,8 +40,15 @@ if [ -d $FUSE_PATCH_DIR ]; then
       fi
       if [[ $i == *.zip ]]; then
         client_message "Waiting for container to be provisioned..."
+        retries=10
+        while [ $retries -gt 1 ]; do
+          if ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'dev:wait-for-service "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=fabric)(osgi.command.function=wait-for-provisioning))"'; then
+            break;
+          fi
+          let retries=$retries-1
+          sleep 10
+        done
 
-        ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'dev:wait-for-service --timeout 240000 "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=fabric)(osgi.command.function=wait-for-provisioning))"'
         ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'fabric:wait-for-provisioning --verbose --provision-timeout 120000'     
         ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'dev:wait-for-service --timeout 240000 "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=fabric)(osgi.command.function=patch-apply))"'
 

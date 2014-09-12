@@ -264,7 +264,14 @@ cart_props "password=${OPENSHIFT_FUSE_PASSWORD}"
 ${FUSE_BIN_DIR}/start
 if $join; then
     wait_for_start
-    ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"
+    retries=10
+    while [ $retries -gt 1 ]; do
+      if ${FUSE_BIN_DIR}/client -r 5 -d 5 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"; then
+        break;
+      fi
+      let retries=$retries-1
+      sleep 10
+    done
     ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
 
     # Create a broker profile on using the ZK server since it should be up and running.
