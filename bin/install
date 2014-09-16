@@ -7,6 +7,7 @@ FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
 FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
 FUSE_USRPROPS_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/users.properties
 FUSE_SYSPROPS_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/system.properties
+FUSE_BRANDING_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/branding.properties
 
 function wait_for_start() {
   for i in {1..20};
@@ -218,6 +219,12 @@ else
 fi
 
 OPENSHIFT_FUSE_CONSOLE_URL="https://${OPENSHIFT_FUSE_DOMAIN_DNS}"
+if [ -f ${FUSE_BRANDING_FILE} ]; then
+  OPENSHIFT_FUSE_DISTRO_VERSION=`ls -1 $OPENSHIFT_FUSE_DIR/container/system/org/jboss/fuse/jboss-fuse | tail -n 1`
+  cat ${FUSE_BRANDING_FILE} | sed -e "s=OPENSHIFT_FUSE_CONSOLE_URL=$OPENSHIFT_FUSE_CONSOLE_URL=g" | sed "s/OPENSHIFT_FUSE_DISTRO_VERSION/$OPENSHIFT_FUSE_DISTRO_VERSION/" > ${FUSE_BRANDING_FILE}.mod
+  cp ${FUSE_BRANDING_FILE}.mod ${FUSE_BRANDING_FILE}
+  rm ${FUSE_BRANDING_FILE}.mod
+fi
 
 client_result ""
 client_result "Application ${OPENSHIFT_APP_NAME} created successfully.  Please make note of these credentials:"
