@@ -189,6 +189,26 @@ case "$1" in
   pre-snapshot)  
     sleep 5
     ;;
+  pre-restore)
+    sleep 5
+    if ! is_running; then
+        # move aside old data dir
+        rm -rf ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak
+        mv ${OPENSHIFT_FUSE_DIR}/container/data ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak
+    else
+        echo "Can't restore because Fuse app is still running."
+    fi
+    ;;
+  post-restore)
+    sleep 5
+    if -f ${OPENSHIFT_FUSE_DIR}/container/data; then
+        # data dir got restored so clean up
+        rm -rf ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak
+        mv ${OPENSHIFT_FUSE_DIR}/container/data ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak
+    else
+        mv ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak ${OPENSHIFT_FUSE_DIR}/container/data
+    fi
+    ;;
   reload)    reload ;;
   tidy)      tidy ;;
   threaddump)      threaddump ;;
