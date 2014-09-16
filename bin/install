@@ -121,6 +121,7 @@ rm -rf hadoop-base hadoop-datanode hadoop-namenode
 rm -rf jboss-brms-controller-tomcat jboss-brms-controller-wildfly jboss-brms-feature-workbench jboss-brms-feature-workbench.openshift
 # rm -rf mq-replicated
 rm -rf openshift-aerogear-pushserver
+rm -rf jboss-jbossews-hawtio
 
 cd $OPENSHIFT_FUSE_DIR
 
