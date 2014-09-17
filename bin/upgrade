@@ -13,6 +13,88 @@ FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
 FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
 password=`cat ${FUSE_PASSWD_FILE}`
 
+function start() {
+  if is_running; then
+    client_message "${OPENSHIFT_APP_NAME} already started"
+  else  
+    ${FUSE_BIN_DIR}/start
+    client_message "Started application"
+  fi
+}
+
+function stop() {
+    if [ -f $FUSE_PID_FILE ]; then
+        PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
+        
+        # Lets first try a graceful stop.
+        ${FUSE_BIN_DIR}/stop
+        wait_for_stop $PID 20
+
+        # if process has not stopped.. lets get a little more agressive.. 
+        if ! ps -p $PID > /dev/null; then
+          client_message "${OPENSHIFT_APP_NAME} did not stop after 20 seconds, running a kill"
+          kill $PID
+          wait_for_stop $PID 20
+          # if process has not stopped.. lets get really agressive.. 
+          if ! ps -p $PID > /dev/null; then
+            client_message "${OPENSHIFT_APP_NAME} did not stop after 20 seconds, running a kill -9"
+            kill -9 $PID
+            wait_for_stop $PID 20
+            if ! ps -p $PID> /dev/null; then
+              client_error "Command Failed: Could not stop the ${OPENSHIFT_APP_NAME} application."
+            fi
+          fi
+        fi
+
+        client_result "Stopped ${OPENSHIFT_APP_NAME}"
+    else
+         echo "${OPENSHIFT_APP_NAME} was stopped already"
+    fi
+}
+
+function restart() {
+    if is_running; then
+        stop
+    fi
+    start
+}
+
+function is_fabric_provisioned() {
+  for i in {1..20};
+     do
+       if [ ! -f $FUSE_PID_FILE ]; then
+         sleep 1
+       else
+         break
+       fi
+     done
+   if [ -f $FUSE_PID_FILE ]; then
+      for j in {1..20};
+         do
+           PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F "=" '{print $2}'`
+           if [ "$PID" = "" ]; then
+             sleep 1
+           else
+            break
+           fi
+     done
+     if ps -p $PID > /dev/null; then
+       retries=30
+       fabric_loaded=0
+       while [ $retries -gt 0 ]; do
+          curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/FabricServiceStatus | grep '"provisionComplete":true' > /dev/null
+          [ $? -eq 0 ] && fabric_loaded=1 && break
+          let retries=$retries-1
+          sleep 5
+       done
+       if [ $fabric_loaded -eq 1 ]; then
+         return 0;
+       fi
+     fi
+   fi
+   return 1;
+}
+
 function is_running() {
    #Check if instance file exists
    if [ ! -f $FUSE_PID_FILE ]; then
@@ -30,6 +112,19 @@ function is_running() {
       return 1
    fi
 }
+
+function wait_for_stop() {
+    for i in {1..$2}; do
+        if ps -p $1 > /dev/null; then
+            rm $FUSE_PID_FILE
+            break
+        else
+            sleep 1
+        fi
+    done  
+}
+
+patch_applied=0
 
 if [ -d $FUSE_PATCH_DIR ]; then
   if is_running; then
@@ -56,16 +151,26 @@ if [ -d $FUSE_PATCH_DIR ]; then
 
         ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} "fabric:patch-apply --all-versions file:${i}"
         if [ "$?" -eq 0 ]; then
+          patch_applied=1
           # only want to apply successful patches once
           rm $i
           touch "${i}.applied"
         else
           client_message "Patch was not succesfully applied. You can try to apply this patch again on the container shell using: "
           client_message "fabric:patch-apply --all-versions file:${i}"
+
+          return 1
         fi
       fi
     done
   else
     client_message "Container not started so patch will be applied after the next startup."
+  fi
+fi
+
+if [ "$patch_applied" -eq 1 ]; then
+  if ! is_fabric_provisioned; then
+    client_message "${OPENSHIFT_APP_NAME} fabric needs to be restarted to complete installation of patch."
+    restart
   fi
 fi
