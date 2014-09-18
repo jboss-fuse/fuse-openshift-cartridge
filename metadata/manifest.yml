@@ -1,5 +1,5 @@
 Name: mvnrepo
-Cartridge-Short-Name: Maven Repo
+Cartridge-Short-Name: mvnrepo
 Display-Name: Maven Repository
 Description: "Runs a Maven Repository on OpenShift."
 Version: '1.0.0'
