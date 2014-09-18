@@ -54,7 +54,7 @@ ServerTokens OS
 #
 # Do NOT add a slash at the end of the directory path.
 #
-ServerRoot "<%= ENV['OPENSHIFT_HTTPD_DIR'] %>"
+ServerRoot "<%= ENV['OPENSHIFT_MVNRPO_DIR'] %>"
 
 #
 # PidFile: The file in which the server should record its process
@@ -133,7 +133,7 @@ MaxRequestsPerChild  0
 # prevent Apache from glomming onto all bound IP addresses (0.0.0.0)
 #
 #Listen 12.34.56.78:80
-Listen <%= ENV['OPENSHIFT_HTTPD_IP']%>:<%= ENV['OPENSHIFT_HTTPD_PORT'] %>
+Listen <%= ENV['OPENSHIFT_MVNREPO_IP']%>:<%= ENV['OPENSHIFT_MVNREPO_PORT'] %>
 
 #
 # Dynamic Shared Object (DSO) Support
