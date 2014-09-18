@@ -3,7 +3,7 @@ Cartridge-Short-Name: Maven Repo
 Display-Name: Maven Repository
 Description: "Runs a Maven Repository on OpenShift."
 Version: '1.0.0'
-Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/mvn-repo.zip
+Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/mvnrepo.zip
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
 Cartridge-Version: 0.0.1
