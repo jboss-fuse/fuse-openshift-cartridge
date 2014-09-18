@@ -3,24 +3,24 @@ source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 
 function start {
-    /usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k start
+    /usr/sbin/httpd -f $OPENSHIFT_MVNREPO_DIR/etc/httpd.conf -k start
 }
 
 function stop {
-    /usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k stop
+    /usr/sbin/httpd -f $OPENSHIFT_MVNREPO_DIR/etc/httpd.conf -k stop
 }
 
 function restart {
-    /usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k restart
+    /usr/sbin/httpd -f $OPENSHIFT_MVNREPO_DIR/etc/httpd.conf -k restart
 }
 
 function build() {
   echo "Building $cartridge_type cartridge"
 
-  MAVEN_SETTINGS_FILE="${OPENSHIFT_FUSE_DIR}/container/m2/settings.xml"
+  MAVEN_SETTINGS_FILE="${OPENSHIFT_MVNREPO_DIR}/etc/settings.xml"
   if $(echo $OPENSHIFT_GEAR_DNS | egrep -qe "\.rhcloud\.com")
   then
-      MAVEN_SETTINGS_FILE="${OPENSHIFT_FUSE_DIR}/container/rhcloud.settings.xml"
+      MAVEN_SETTINGS_FILE="${OPENSHIFT_MVNREPO_DIR}/etc/rhcloud.settings.xml"
   fi
 
   max_memory_mb=${OPENSHIFT_GEAR_MEMORY_MB}
@@ -70,10 +70,10 @@ function build() {
           if [ -n "$MAVEN_SETTINGS_FILE" ]
           then
               mvn --global-settings $MAVEN_SETTINGS_FILE --version
-              mvn --global-settings $MAVEN_SETTINGS_FILE $MAVEN_ARGS -Dfuse-server=http://admin@${OPENSHIFT_FUSE_PASSWORD}:${OPENSHIFT_FUSE_DOMAIN_DNS}
+              mvn --global-settings $MAVEN_SETTINGS_FILE $MAVEN_ARGS -Dfuse-server=http://admin@${OPENSHIFT_MVNREPO_PASSWORD}:${OPENSHIFT_MVNREPO_DOMAIN_DNS}
           else
               mvn --version
-              mvn $MAVEN_ARGS -Dfuse-server=http://admin@${OPENSHIFT_FUSE_PASSWORD}:${OPENSHIFT_FUSE_DOMAIN_DNS}
+              mvn $MAVEN_ARGS -Dfuse-server=http://admin@${OPENSHIFT_MVNREPO_PASSWORD}:${OPENSHIFT_MVNREPO_DOMAIN_DNS}
           fi
           popd > /dev/null
 
