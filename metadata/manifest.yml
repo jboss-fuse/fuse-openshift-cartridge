@@ -10,8 +10,8 @@ Cartridge-Version: 0.0.1
 Cartridge-Vendor: test
 Vendor: test
 Categories:
-  - build
   - service
+  - web_framework
 Provides:
   - httpd
 Scaling:
