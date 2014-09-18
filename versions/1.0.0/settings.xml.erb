@@ -1,0 +1,24 @@
+<settings>
+  <localRepository><%= ENV['OPENSHIFT_DEPENDENCIES_DIR'] %>.m2/repository</localRepository>
+  <profiles>
+    <profile>
+      <id>openshift</id>
+      <repositories>
+        <repository>
+          <id>fuse-server</id>
+          <url>file:<%= ENV['OPENSHIFT_PRIMARY_CARTRIDGE_DIR'] %>container/system</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>fuse-server</id>
+          <url>file:<%= ENV['OPENSHIFT_PRIMARY_CARTRIDGE_DIR'] %>container/system</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+</settings>

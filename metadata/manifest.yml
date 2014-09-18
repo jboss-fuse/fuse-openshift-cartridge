@@ -1,258 +1,31 @@
-Name: fuse
-Cartridge-Short-Name: FUSE
-Display-Name: JBoss Fuse 6.1.0 EA
-Description: "Runs a JBoss Fuse container on OpenShift."
+Name: mvnrepo
+Cartridge-Short-Name: Maven Repo
+Display-Name: Maven Repository
+Description: "Runs a Maven Repository on OpenShift."
 Version: '1.0.0'
+Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/mvn-repo.zip
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
 Cartridge-Version: 0.0.1
-Compatible-Versions:
-- 0.0.1
-- 0.0.2
-- 0.0.3
-- 0.0.4
-- 0.0.5
-- 0.0.6
-- 0.0.7
-- 0.0.8
-- 0.0.9
-- 0.0.10
 Cartridge-Vendor: redhat
 Vendor: redhat
 Categories:
-  - web_framework
-  - java
-  - jboss
-  - xpaas
+  - build
   - service
-Website: http://www.redhat.com/products/jbossenterprisemiddleware/fuse/
-Help-Topics:
-  "Getting Started": https://www.openshift.com/videos/getting-started-with-jboss-fuse-on-openshift
-Cart-Data:
-  - Key: OPENSHIFT_FUSE_LOG_DIR
-    Type: environment
-    Description: "Directory to store application log files."
-  - Key: OPENSHIFT_FUSE_ZOOKEEPER_URL
-    Type: environment
-    Description: "The url to zookeeper."
-  - Key: OPENSHIFT_FUSE_PASSWORD
-    Type: environment
-    Description: "The password password to the app."
-  - Key: MAVEN_UPLOAD_URL
-    Type: environment
-    Description: "The url to the fabric maven proxy."
-  - Key: OPENSHIFT_TMP_DIR
-    Type: environment
-    Description: "Directory to store application temporary files."
-  - Key: OPENSHIFT_REPO_DIR
-    Type: environemnt
-    Description: "Application root directory where application files reside. This directory is reset every time you do a git-push"
-  - Key: OPENSHIFT_FUSE_PORT
-    Type: environment
-    Description: "Internal port to which the web-framework binds to."
-  - Key: OPENSHIFT_FUSE_IP
-    Type: environment
-    Description: "Internal IP to which the web-framework binds to."
-  - Key: OPENSHIFT_APP_DNS
-    Type: environment
-    Description: "Fully qualified domain name for the application."
-  - Key: OPENSHIFT_APP_NAME
-    Type: environment
-    Description: "Application name"
-  - Key: OPENSHIFT_DATA_DIR
-    Type: environment
-    Description: "Directory to store application data files. Preserved across git-pushes. Not shared across gears."
-  - Key: OPENSHIFT_APP_UUID
-    Type: environment
-    Description: "Unique ID which identified the application. Does not change between gears."
-  - Key: OPENSHIFT_GEAR_UUID
-    Type: environment
-    Description: "Unique ID which identified the gear. This value changes between gears."
 Provides:
-  - fuse-7.3.0
-  - fuse
-Publishes:
-Subscribes:
+  - httpd
 Scaling:
   Min: 1
-  Max: 1
+  Max: 3
 Group-Overrides:
   - components:
-    - web-proxy
+    - httpd
 Endpoints:
-
-  #
-  # The Main HTTP port for the app.
-  #
   - Private-IP-Name:   IP
-    Private-Port-Name: HTTP_PORT
+    Private-Port-Name: PORT
     Private-Port:      8080
     Public-Port-Name:  PROXY_PORT
     Mappings:
       - Frontend:      ""
         Backend:       ""
-        #Options:       { "tohttps": true }
-
-#
-# Non-SSL Exposed Ports.
-#
-  - Private-IP-Name:   IP
-    Private-Port-Name: ZOOKEEPER_PORT
-    Private-Port:      3128
-    Public-Port-Name:  ZOOKEEPER_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: SSH_PORT
-    Private-Port:      23101
-    Public-Port-Name:  SSH_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-
-  # AMQ Ports.
-  - Private-IP-Name:   IP
-    Private-Port-Name: OPENWIRE_PORT
-    Private-Port:      31313
-    Public-Port-Name:  OPENWIRE_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: STOMP_PORT
-    Private-Port:      31323
-    Public-Port-Name:  STOMP_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: AMQP_PORT
-    Private-Port:      31333
-    Public-Port-Name:  AMQP_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: MQTT_PORT
-    Private-Port:      31343
-    Public-Port-Name:  MQTT_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: REPLICATION_PORT
-    Private-Port:      31353
-    Public-Port-Name:  REPLICATION_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-
-  # Elastic Search Ports
-  - Private-IP-Name:   IP
-    Private-Port-Name: ES_HTTP_PORT
-    Private-Port:      18080
-    Public-Port-Name:  ES_HTTP_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: ES_TCP_PORT
-    Private-Port:      19301
-    Public-Port-Name:  ES_TCP_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-
-  # Gateway Ports
-  - Private-IP-Name:   IP
-    Private-Port-Name: GATEWAY_PORT
-    Private-Port:      30303
-    Public-Port-Name:  GATEWAY_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-
-  - Private-IP-Name:   IP
-    Private-Port-Name: APP_PORT_1
-    Private-Port:      3001
-    Public-Port-Name:  APP_PORT_1_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: APP_PORT_2
-    Private-Port:      3002
-    Public-Port-Name:  APP_PORT_2_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-  - Private-IP-Name:   IP
-    Private-Port-Name: APP_PORT_3
-    Private-Port:      3003
-    Public-Port-Name:  APP_PORT_3_PROXY_PORT
-    Options:           { "ssl_to_gear": true }
-
-#
-# SNI routed SSL ports..
-#
-  - Private-IP-Name:   IP
-    Private-Port-Name: OPENWIRE_SSL_PORT
-    Private-Port:      31314
-    Public-Port-Name:  OPENWIRE_SSL_PROXY_PORT
-    Protocols: [tls]
-    Mappings:
-    - Frontend: 'TLS_PORT_1'
-      Backend: ''
-  - Private-IP-Name:   IP
-    Private-Port-Name: STOMP_SSL_PORT
-    Private-Port:      31324
-    Public-Port-Name:  STOMP_SSL_PROXY_PORT
-    Protocols: [tls]
-    Mappings:
-    - Frontend: 'TLS_PORT_2'
-      Backend: ''
-  - Private-IP-Name:   IP
-    Private-Port-Name: AMQP_SSL_PORT
-    Private-Port:      31334
-    Public-Port-Name:  AMQP_SSL_PROXY_PORT
-    Protocols: [tls]
-    Mappings:
-    - Frontend: 'TLS_PORT_3'
-      Backend: ''
-  - Private-IP-Name:   IP
-    Private-Port-Name: MQTT_SSL_PORT
-    Private-Port:      31344
-    Public-Port-Name:  MQTT_SSL_PROXY_PORT
-    Protocols: [tls]
-    Mappings:
-    - Frontend: 'TLS_PORT_4'
-      Backend: ''
-
-  # Gateway Ports
-  - Private-IP-Name:   IP
-    Private-Port-Name: GATEWAY_SSL_PORT
-    Private-Port:      30304
-    Public-Port-Name:  GATEWAY_SSL_PROXY_PORT
-    Protocols: [tls]
-    Mappings:
-    - Frontend: 'TLS_PORT_5'
-      Backend: ''
-
-  - Private-IP-Name:   IP
-    Private-Port-Name: APP_TLS_PORT_1
-    Private-Port:      4001
-    Public-Port-Name:  APP_TLS_PORT_1_PROXY_PORT
-    Protocols: [tls]
-    Mappings:
-    - Frontend: 'TLS_PORT_6'
-      Backend: ''
-  - Private-IP-Name:   IP
-    Private-Port-Name: APP_TLS_PORT_2
-    Private-Port:      4002
-    Public-Port-Name:  APP_TLS_PORT_2_PROXY_PORT
-    Protocols: [tls]
-    Mappings:
-    - Frontend: 'TLS_PORT_7'
-      Backend: ''
-  - Private-IP-Name:   IP
-    Private-Port-Name: APP_TLS_PORT_3
-    Private-Port:      4003
-    Public-Port-Name:  APP_TLS_PORT_3_PROXY_PORT
-    Protocols: [tls]
-    Mappings:
-    - Frontend: 'TLS_PORT_8'
-      Backend: ''
-
-  #
-  # Ports private to the gear
-  #
-  - Private-IP-Name:   IP
-    Private-Port-Name: SHUTDOWN_PORT
-    Private-Port:      15001
-  - Private-IP-Name:   IP
-    Private-Port-Name: RMI_SERVER_PORT
-    Private-Port:      44444
-  - Private-IP-Name:   IP
-    Private-Port-Name: RMI_REGISTRY_PORT
-    Private-Port:      16099
-
-Install-Build-Required: false
-Additional-Control-Actions:
-- threaddump
+        Options:       { websockets: false }

@@ -1,13 +1,6 @@
+---
 locked_files:
-- bin/
-- bin/*
-- metadata/
-- metadata/*
 - env/
-- env/OPENSHIFT_FUSE_DATA_DIR
-- env/OPENSHIFT_FUSE_DEPLOY_DIR
-- env/OPENSHIFT_FUSE_LOG_DIR
-- version
-- version/*
+- env/*
 processed_templates:
-- 'env/*.erb'
+- '**/*.erb'

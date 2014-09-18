@@ -1,216 +1,108 @@
 #!/bin/bash
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-FUSE_BIN_DIR=${OPENSHIFT_FUSE_DIR}/container/bin
-FUSE_PID_FILE=${OPENSHIFT_FUSE_DIR}/container/instances/instance.properties
-FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
 
-function start() {
-  if is_running; then
-    client_message "${OPENSHIFT_APP_NAME} already started"
-  else  
-    ${FUSE_BIN_DIR}/start
-    wait_for_start    
-    client_message "Started application"
+function start {
+    /usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k start
+}
+
+function stop {
+    /usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k stop
+}
+
+function restart {
+    /usr/sbin/httpd -f $OPENSHIFT_HTTPD_DIR/etc/httpd.conf -k restart
+}
+
+function build() {
+  echo "Building $cartridge_type cartridge"
+
+  MAVEN_SETTINGS_FILE="${OPENSHIFT_FUSE_DIR}/container/m2/settings.xml"
+  if $(echo $OPENSHIFT_GEAR_DNS | egrep -qe "\.rhcloud\.com")
+  then
+      MAVEN_SETTINGS_FILE="${OPENSHIFT_FUSE_DIR}/container/rhcloud.settings.xml"
   fi
-  
-  # apply any patches we have in patches dir to the booted GA distro
-  ${OPENSHIFT_FUSE_DIR}/bin/upgrade
-}
 
+  max_memory_mb=${OPENSHIFT_GEAR_MEMORY_MB}
 
+  # If hot deploy is enabled, we need to restrict the Maven memory size to fit
+  # alongside the running application server. For now, just hard-code it to 64
+  # and figure out how to apply a scaling factor later.
+  if hot_deploy_enabled_for_latest_deployment
+  then
+      echo "Scaling down Maven heap settings"
 
-function stop() {
-    if [ -f $FUSE_PID_FILE ]; then
-        PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
-        
-        # Lets first try a graceful stop.
-        ${FUSE_BIN_DIR}/stop
-        wait_for_stop $PID 20
+      if [ -z "$MAVEN_JVM_HEAP_RATIO" ]; then
+      MAVEN_JVM_HEAP_RATIO=0.25
+    fi
+  else
+    if [ -z "$MAVEN_JVM_HEAP_RATIO" ]; then
+      MAVEN_JVM_HEAP_RATIO=0.75
+    fi
+  fi
 
-        # if process has not stopped.. lets get a little more agressive.. 
-        if ! ps -p $PID > /dev/null; then
-          client_message "${OPENSHIFT_APP_NAME} did not stop after 20 seconds, running a kill"
-          kill $PID
-          wait_for_stop $PID 20
-          # if process has not stopped.. lets get really agressive.. 
-          if ! ps -p $PID > /dev/null; then
-            client_message "${OPENSHIFT_APP_NAME} did not stop after 20 seconds, running a kill -9"
-            kill -9 $PID
-            wait_for_stop $PID 20
-            if ! ps -p $PID> /dev/null; then
-              client_error "Command Failed: Could not stop the ${OPENSHIFT_APP_NAME} application."
-            fi
+  max_heap=$( echo "$max_memory_mb * $MAVEN_JVM_HEAP_RATIO" | bc | awk '{print int($1+0.5)}')
+
+  OPENSHIFT_MAVEN_XMX="-Xmx${max_heap}m"
+
+  if [ -z "$BUILD_NUMBER" ]
+  then
+      if force_clean_build_enabled_for_latest_deployment
+      then
+          echo "Force-clean build is enabled. Removing Maven dependencies." 1>&2
+          rm -rf ${OPENSHIFT_HOMEDIR}.m2/* ${OPENSHIFT_HOMEDIR}.m2/.[^.]*
+      fi
+
+      if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! marker_present skip_maven_build
+      then
+          pushd ${OPENSHIFT_REPO_DIR} > /dev/null
+
+          if [ -z "$MAVEN_OPTS" ]; then
+            export MAVEN_OPTS="$OPENSHIFT_MAVEN_XMX"
           fi
-        fi
 
-        client_result "Stopped ${OPENSHIFT_APP_NAME}"
-    else
-         echo "${OPENSHIFT_APP_NAME} was stopped already"
-    fi
+          if [ -z "$MAVEN_ARGS" ]; then
+            export MAVEN_ARGS="clean deploy -Popenshift -DskipTests"
+          fi
+
+          echo "Found pom.xml... attempting to build with 'mvn -e ${MAVEN_ARGS}'"
+
+          if [ -n "$MAVEN_SETTINGS_FILE" ]
+          then
+              mvn --global-settings $MAVEN_SETTINGS_FILE --version
+              mvn --global-settings $MAVEN_SETTINGS_FILE $MAVEN_ARGS -Dfuse-server=http://admin@${OPENSHIFT_FUSE_PASSWORD}:${OPENSHIFT_FUSE_DOMAIN_DNS}
+          else
+              mvn --version
+              mvn $MAVEN_ARGS -Dfuse-server=http://admin@${OPENSHIFT_FUSE_PASSWORD}:${OPENSHIFT_FUSE_DOMAIN_DNS}
+          fi
+          popd > /dev/null
+
+          CART_NAME=${cartridge_type}
+      fi
+
+      if [ ! -f ${OPENSHIFT_REPO_DIR}pom.xml ]; then
+        echo "Skipping Maven build due to absence of pom.xml"
+      fi
+
+      if marker_present "skip_maven_build"; then
+        echo "skip_maven_build marker found; build will be skipped"
+      fi
+
+  fi
+
 }
 
-function restart() {
-    if is_running; then
-        stop
-    fi
-    start
+function catchall {
+    echo "not yet implemented"
 }
-
-function status() {
-   if is_running; then
-      client_result "${OPENSHIFT_APP_NAME} is running"
-   else
-      client_result "${OPENSHIFT_APP_NAME} is either stopped or inaccessible"
-   fi
-}
-
-function reload() {
-    client_message "Reloading app ${OPENSHIFT_APP_NAME}"
-    restart
-}
-
-function tidy() {
-  client_message "Emptying log dir: $OPENSHIFT_FUSE_LOG_DIR"
-  shopt -s dotglob
-  rm -rf $OPENSHIFT_FUSE_LOG_DIR/*
-  truncate -s0 $OPENSHIFT_FUSE_DIR/container/data/log/karaf.log
-  rm -f $OPENSHIFT_FUSE_DIR/container/data/log/karaf.log.*
-}
-
-function is_running() {
-   #Check if instance file exists
-   if [ ! -f $FUSE_PID_FILE ]; then
-      return 1
-   fi
-
-   #Check if pid exists
-   PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
-   if [ "$PID" = "" ]; then
-      return 1
-   elif ps -p $PID > /dev/null; then
-      return 0
-   else
-      rm $FUSE_PID_FILE
-      return 1
-   fi
-}
-
-function wait_for_stop() {
-    for i in {1..$2}; do
-        if ps -p $1 > /dev/null; then
-            rm $FUSE_PID_FILE
-            break
-        else
-            sleep 1
-        fi
-    done  
-}
-
-function wait_for_start() {
-  for i in {1..20};
-     do
-       if [ ! -f $FUSE_PID_FILE ]; then
-         sleep 1
-       else
-         break
-       fi
-     done
-   if [ -f $FUSE_PID_FILE ]; then
-      for j in {1..20};
-         do
-           PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F "=" '{print $2}'`
-           if [ "$PID" = "" ]; then
-             sleep 1
-           else
-            break
-           fi
-     done
-     if ps -p $PID > /dev/null; then
-       retries=18
-       fabric_loaded=0
-       while [ $retries -gt 0 ]; do
-          curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/CurrentContainerName | grep '"status":200' > /dev/null
-          [ $? -eq 0 ] && fabric_loaded=1 && break
-          let retries=$retries-1
-          sleep 5
-       done
-       if [ $fabric_loaded -eq 1 ]; then
-         client_result "${OPENSHIFT_APP_NAME} ($PID) is started successfully"
-       else
-         client_error "Command Failed: Could not reach ${OPENSHIFT_APP_NAME} console."
-       fi
-     else
-       client_error "Command Failed: ${OPENSHIFT_APP_NAME} ($PID) is not running"
-     fi
-   else
-    client_error "Command Failed: Could not find instance.properties"
-   fi
-}
-
-function deploy() {
-  client_message "Please use the fabric git repo instead of the OS application git repo:"
-  client_message ""
-  client_message "  git clone -b 1.0 http://admin:${OPENSHIFT_FUSE_DOMAIN_PASSWORD}@${OPENSHIFT_FUSE_DOMAIN_DNS}/git/fabric"
-  client_message ""
-  
-  
-  # fabric_shell "fabric:import ${OPENSHIFT_REPO_DIR}/.openshift/config/profiles"
-}
-
-function fabric_shell() {
- password=`cat ${FUSE_PASSWD_FILE}`
- client_message "Connnecting to shell using: ${password}"
- ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} $*
-}
-
-function threaddump() {
-  echo "Thread dump for the application"
-
-    if ! is_running; then
-        echo "${OPENSHIFT_APP_NAME} is stopped"
-    elif [ -f "$FUSE_PID_FILE" ]; then
-        pid=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F " = " '{print $2}'`
-        jstack -l $pid > $OPENSHIFT_FUSE_LOG_DIR/threaddump.log
-        client_result "Success"
-        client_result ""
-        client_result "The thread dump file will be available via: rhc tail $OPENSHIFT_APP_NAME -g $OPENSHIFT_GEAR_UUID -f ${OPENSHIFT_FUSE_LOG_DIR}threaddump.log -o '-n 250'"
-    else 
-        echo "Failed to locate the PID File"
-    fi
-}
-
 case "$1" in
-  deploy)    deploy ;;
+  build)     build ;;
   start)     start ;;
   stop)      stop ;;
   restart)   restart ;;
-  status)    status ;;
-  pre-snapshot)  
-    sleep 5
-    ;;
-  pre-restore)
-    sleep 5
-    if ! is_running; then
-        # move aside old data dir
-        rm -rf ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak
-        mv ${OPENSHIFT_FUSE_DIR}/container/data ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak
-    else
-        echo "Can't restore because Fuse app is still running."
-    fi
-    ;;
-  post-restore)
-    sleep 5
-    if -f ${OPENSHIFT_FUSE_DIR}/container/data; then
-        # data dir got restored so clean up
-        rm -rf ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak
-        mv ${OPENSHIFT_FUSE_DIR}/container/data ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak
-    else
-        mv ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak ${OPENSHIFT_FUSE_DIR}/container/data
-    fi
-    ;;
-  reload)    reload ;;
-  tidy)      tidy ;;
-  threaddump)      threaddump ;;
+  deploy)    catchall ;;
+  status)    catchall ;;
+  reload)    catchall ;;
+  tidy)      catchall ;;
   *)         exit 0
 esac
