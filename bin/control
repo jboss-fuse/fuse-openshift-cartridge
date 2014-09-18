@@ -1,6 +1,6 @@
 #!/bin/bash
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
-exit 0
+
 function start {
     /usr/sbin/httpd -f $OPENSHIFT_MVNREPO_DIR/etc/httpd.conf -k start
 }
@@ -61,7 +61,7 @@ function build() {
           fi
 
           if [ -z "$MAVEN_ARGS" ]; then
-            export MAVEN_ARGS="clean deploy -Popenshift -DskipTests"
+            export MAVEN_ARGS="clean install -Popenshift -DskipTests"
           fi
 
           echo "Found pom.xml... attempting to build with 'mvn -e ${MAVEN_ARGS}'"
@@ -69,10 +69,10 @@ function build() {
           if [ -n "$MAVEN_SETTINGS_FILE" ]
           then
               mvn --global-settings $MAVEN_SETTINGS_FILE --version
-              mvn --global-settings $MAVEN_SETTINGS_FILE $MAVEN_ARGS -Dfuse-server=http://admin@${OPENSHIFT_MVNREPO_PASSWORD}:${OPENSHIFT_MVNREPO_DOMAIN_DNS}
+              mvn --global-settings $MAVEN_SETTINGS_FILE $MAVEN_ARGS 
           else
               mvn --version
-              mvn $MAVEN_ARGS -Dfuse-server=http://admin@${OPENSHIFT_MVNREPO_PASSWORD}:${OPENSHIFT_MVNREPO_DOMAIN_DNS}
+              mvn $MAVEN_ARGS
           fi
           popd > /dev/null
 
