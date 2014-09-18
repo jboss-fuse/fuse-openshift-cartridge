@@ -139,6 +139,11 @@ echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/conf
 # Limit the maximum number of created threads
 echo "felix.threading.timeout=0" >> container/etc/config.properties
 
+# reduce transient bundles loaded on start before fabric is created
+cat etc/org.apache.karaf.features.cfg | sed 's/featuresBoot.*/featuresBoot=jasypt-encryption,config,management,fabric/' > etc/org.apache.karaf.features.cfg.mod || :
+cp etc/org.apache.karaf.features.cfg.mod etc/org.apache.karaf.features.cfg || :
+rm etc/org.apache.karaf.features.cfg.mod || :
+
 # Retrieve password
 if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD:-}" ]; then
     OPENSHIFT_FUSE_PASSWORD="${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
