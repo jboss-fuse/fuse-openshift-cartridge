@@ -54,7 +54,8 @@ ServerTokens OS
 #
 # Do NOT add a slash at the end of the directory path.
 #
-ServerRoot "<%= ENV['OPENSHIFT_DEPENDENCIES_DIR'] %>"
+
+ServerRoot "<%= ENV['OPENSHIFT_MVNREPO_DIR'] %>"
 
 #
 # PidFile: The file in which the server should record its process
@@ -289,7 +290,7 @@ UseCanonicalName Off
 # documents. By default, all requests are taken from this directory, but
 # symbolic links and aliases may be used to point to other locations.
 #
-DocumentRoot "<%= ENV['OPENSHIFT_REPO_DIR'] %>"
+DocumentRoot "<%= ENV['OPENSHIFT_DEPENDENCIES_DIR'] %>"
 
 #
 # Each directory to which Apache has access can be configured with respect
@@ -314,7 +315,7 @@ DocumentRoot "<%= ENV['OPENSHIFT_REPO_DIR'] %>"
 #
 # This should be changed to whatever you set DocumentRoot to.
 #
-<Directory "/var/www/html">
+<Directory "<%= ENV['OPENSHIFT_DEPENDENCIES_DIR'] %>">
 
 #
 # Possible values for the Options directive are "None", "All",
