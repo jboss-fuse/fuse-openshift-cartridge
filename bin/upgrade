@@ -79,7 +79,7 @@ function is_fabric_provisioned() {
            fi
      done
      if ps -p $PID > /dev/null; then
-       retries=30
+       retries=60
        fabric_loaded=0
        while [ $retries -gt 0 ]; do
           curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/FabricServiceStatus | grep '"provisionComplete":true' > /dev/null
