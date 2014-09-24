@@ -31,16 +31,16 @@ function stop() {
         wait_for_stop $PID 20
 
         # if process has not stopped.. lets get a little more agressive.. 
-        if ! ps -p $PID > /dev/null; then
+        if ps -p $PID > /dev/null; then
           client_message "${OPENSHIFT_APP_NAME} did not stop after 20 seconds, running a kill"
           kill $PID
           wait_for_stop $PID 20
           # if process has not stopped.. lets get really agressive.. 
-          if ! ps -p $PID > /dev/null; then
+          if ps -p $PID > /dev/null; then
             client_message "${OPENSHIFT_APP_NAME} did not stop after 20 seconds, running a kill -9"
             kill -9 $PID
             wait_for_stop $PID 20
-            if ! ps -p $PID> /dev/null; then
+            if ps -p $PID> /dev/null; then
               client_error "Command Failed: Could not stop the ${OPENSHIFT_APP_NAME} application."
             fi
           fi
@@ -115,7 +115,7 @@ function is_running() {
 
 function wait_for_stop() {
     for i in {1..$2}; do
-        if ps -p $1 > /dev/null; then
+        if ! ps -p $1 > /dev/null; then
             rm $FUSE_PID_FILE
             break
         else
