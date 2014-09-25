@@ -38,9 +38,9 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %dir %{cartridgedir}
 %dir %{cartridgedir}/bin
-%dir %{cartridgedir}/env
 %dir %{cartridgedir}/metadata
-%dir %{cartridgedir}/versions
+%dir %{cartridgedir}/run
+%dir %{cartridgedir}/template
 %attr(0755,-,-) %{cartridgedir}/bin/
 %attr(0755,-,-) %{frameworkdir}
 %{cartridgedir}/metadata/manifest.yml

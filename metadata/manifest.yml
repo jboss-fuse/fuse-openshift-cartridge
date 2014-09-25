@@ -1,19 +1,29 @@
-Name: mvnrepo
-Cartridge-Short-Name: mvnrepo
-Display-Name: Maven Repository
-Description: "Runs a Maven Repository on OpenShift."
+Name: fuse-builder
+Cartridge-Short-Name: fuse-builder
+Display-Name: JBoss Fuse Builder 6.1.0 EA
+Description: "Runs a JBoss Fuse Builder on OpenShift."
 Version: '1.0.0'
-Source-Url: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/wip.zip
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
 Cartridge-Version: 0.0.1
-Cartridge-Vendor: test
-Vendor: test
+Compatible-Versions:
+- 0.0.1
+- 0.0.2
+- 0.0.3
+- 0.0.4
+- 0.0.5
+- 0.0.6
+- 0.0.7
+- 0.0.8
+- 0.0.9
+- 0.0.10
+Cartridge-Vendor: redhat
+Vendor: redhat
 Categories:
-  - service
-  - web_framework
+  - xpaas
+  - java
 Provides:
-  - httpd
+  - fuse-builder
 Scaling:
   Min: 1
   Max: 3
