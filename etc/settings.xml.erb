@@ -1,3 +1,21 @@
 <settings>
   <localRepository><%= ENV['OPENSHIFT_DEPENDENCIES_DIR'] %></localRepository>
+  <servers>
+    <server>
+      <id>fabric8.upload.repo</id>
+      <username>admin</username>
+      <password><%= ENV['OPENSHIFT_FUSE_DOMAIN_PASSWORD'] %></password>
+    </server>
+  </servers>
+  <profiles>
+    <profile>
+      <id>openshift</id>
+      <properties>
+        <fabric8.jolokiaUrl>http://<%= ENV['OPENSHIFT_FUSE_DOMAIN_DNS'] %>/jolokia</fabric8.jolokiaUrl>
+      </properties>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>openshift</activeProfile>
+  </activeProfiles>
 </settings>

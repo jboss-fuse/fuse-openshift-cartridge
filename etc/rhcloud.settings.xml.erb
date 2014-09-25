@@ -1,5 +1,12 @@
 <settings>
   <localRepository><%= ENV['OPENSHIFT_DEPENDENCIES_DIR'] %></localRepository>
+  <servers>
+    <server>
+      <id>fabric8.upload.repo</id>
+      <username>admin</username>
+      <password><%= ENV['OPENSHIFT_FUSE_DOMAIN_PASSWORD'] %></password>
+    </server>
+  </servers>
   <mirrors>
     <mirror>
       <id>nexus</id>
@@ -9,7 +16,10 @@
   </mirrors>
   <profiles>
     <profile>
-      <id>nexus</id>
+      <id>openshift</id>
+      <properties>
+        <fabric8.jolokiaUrl>http://<%= ENV['OPENSHIFT_FUSE_DOMAIN_DNS'] %>/jolokia</fabric8.jolokiaUrl>
+      </properties>
       <repositories>
         <repository>
           <id>eap</id>
@@ -41,6 +51,6 @@
     </profile>
   </profiles>
   <activeProfiles>
-    <activeProfile>nexus</activeProfile>
+    <activeProfile>openshift</activeProfile>
   </activeProfiles>
 </settings>
