@@ -127,13 +127,13 @@ function wait_for_start() {
            fi
      done
      if ps -p $PID > /dev/null; then
-       retries=18
+       retries=300
        fabric_loaded=0
        while [ $retries -gt 0 ]; do
           curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/CurrentContainerName | grep '"status":200' > /dev/null
           [ $? -eq 0 ] && fabric_loaded=1 && break
           let retries=$retries-1
-          sleep 5
+          sleep 1
        done
        if [ $fabric_loaded -eq 1 ]; then
          client_result "${OPENSHIFT_APP_NAME} ($PID) is started successfully"

@@ -30,13 +30,13 @@ function wait_for_start() {
      done
      if ps -p $PID > /dev/null; then
        if [ "$1" == "wait-for-fabric" ] ; then
-         retries=60
+         retries=300
          fabric_loaded=0
          while [ $retries -gt 1 ]; do
             result=`curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/CurrentContainerName || :`
             ( echo $result | grep '"status":200' > /dev/null ) && fabric_loaded=1 && break
             let retries=$retries-1
-            sleep 5
+            sleep 1
          done         
          if [ $fabric_loaded -eq 1 ]; then
            client_result ""
@@ -256,20 +256,15 @@ cart_props "password=${OPENSHIFT_FUSE_PASSWORD}"
 ${FUSE_BIN_DIR}/start
 if $join; then
     wait_for_start
-    retries=10
+    retries=20
     while [ $retries -gt 1 ]; do
       if ${FUSE_BIN_DIR}/client -r 5 -d 5 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"; then
         break;
       fi
       let retries=$retries-1
-      sleep 10
+      sleep 5
     done
     ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
-
-    wait_for_start 'wait-for-fabric'
-
-    # apply any patches we have in patches dir to the booted GA distro
-    ${OPENSHIFT_FUSE_DIR}/bin/upgrade
 
     client_result ""
     client_result "WARNING: Creating fabric containers directly from"
