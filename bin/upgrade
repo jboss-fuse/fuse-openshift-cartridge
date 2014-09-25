@@ -79,13 +79,13 @@ function is_fabric_provisioned() {
            fi
      done
      if ps -p $PID > /dev/null; then
-       retries=60
+       retries=300
        fabric_loaded=0
        while [ $retries -gt 0 ]; do
           curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/FabricServiceStatus | grep '"provisionComplete":true' > /dev/null
           [ $? -eq 0 ] && fabric_loaded=1 && break
           let retries=$retries-1
-          sleep 5
+          sleep 1
        done
        if [ $fabric_loaded -eq 1 ]; then
          return 0;
@@ -135,13 +135,13 @@ if [ -d $FUSE_PATCH_DIR ]; then
       fi
       if [[ $i == *.zip ]]; then
         client_message "Waiting for container to be provisioned..."
-        retries=10
+        retries=20
         while [ $retries -gt 1 ]; do
           if ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'dev:wait-for-service "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=fabric)(osgi.command.function=wait-for-provisioning))"'; then
             break;
           fi
           let retries=$retries-1
-          sleep 10
+          sleep 5
         done
 
         ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'fabric:wait-for-provisioning --verbose --provision-timeout 120000'     
