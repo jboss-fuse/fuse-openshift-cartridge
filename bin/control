@@ -14,10 +14,16 @@ function restart {
 }
 
 function build() {
-  
+
+  BUILD_NUMBER_FILE="${OPENSHIFT_DEPENDENCIES_DIR}build-number.txt"
+  BUILD_NUMBER=`cat ${BUILD_NUMBER_FILE}`
+  BUILD_NUMBER=$((${BUILD_NUMBER}+1))
+  BUILD_NUMBER_PADDED=`printf "%04d" "${BUILD_NUMBER}"`
+  echo ${BUILD_NUMBER} > ${BUILD_NUMBER_FILE}
+
   # restart the http server so it can pick up any config changes.
-  ${OPENSHIFT_MVNREPO_DIR}/bin/control restart 
-  
+  ${OPENSHIFT_MVNREPO_DIR}/bin/control restart
+
   echo "Building $cartridge_type cartridge"
 
   MAVEN_SETTINGS_FILE="${OPENSHIFT_MVNREPO_DIR}/etc/settings.xml"
@@ -48,49 +54,45 @@ function build() {
 
   OPENSHIFT_MAVEN_XMX="-Xmx${max_heap}m"
 
-  if [ -z "$BUILD_NUMBER" ]
+  if force_clean_build_enabled_for_latest_deployment
   then
-      if force_clean_build_enabled_for_latest_deployment
+      echo "Force-clean build is enabled. Removing Maven dependencies." 1>&2
+      rm -rf ${OPENSHIFT_HOMEDIR}.m2/* ${OPENSHIFT_HOMEDIR}.m2/.[^.]*
+  fi
+
+  if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! marker_present skip_maven_build
+  then
+      pushd ${OPENSHIFT_REPO_DIR} > /dev/null
+
+      if [ -z "$MAVEN_OPTS" ]; then
+        export MAVEN_OPTS="$OPENSHIFT_MAVEN_XMX"
+      fi
+
+      if [ -z "$MAVEN_ARGS" ]; then
+        export MAVEN_ARGS="clean install -Popenshift -DskipTests"
+      fi
+
+      echo "Found pom.xml... attempting to build with 'mvn -e ${MAVEN_ARGS}'"
+
+      if [ -n "$MAVEN_SETTINGS_FILE" ]
       then
-          echo "Force-clean build is enabled. Removing Maven dependencies." 1>&2
-          rm -rf ${OPENSHIFT_HOMEDIR}.m2/* ${OPENSHIFT_HOMEDIR}.m2/.[^.]*
+          mvn --global-settings $MAVEN_SETTINGS_FILE --version
+          mvn --global-settings $MAVEN_SETTINGS_FILE $MAVEN_ARGS -Dbuild.number=${BUILD_NUMBER} -Dbuild.number.padded=${BUILD_NUMBER_PADDED}
+      else
+          mvn --version
+          mvn $MAVEN_ARGS -Dbuild.number=${BUILD_NUMBER} -Dbuild.number.padded=${BUILD_NUMBER_PADDED}
       fi
+      popd > /dev/null
 
-      if [ -f ${OPENSHIFT_REPO_DIR}pom.xml ] && ! marker_present skip_maven_build
-      then
-          pushd ${OPENSHIFT_REPO_DIR} > /dev/null
+      CART_NAME=${cartridge_type}
+  fi
 
-          if [ -z "$MAVEN_OPTS" ]; then
-            export MAVEN_OPTS="$OPENSHIFT_MAVEN_XMX"
-          fi
+  if [ ! -f ${OPENSHIFT_REPO_DIR}pom.xml ]; then
+    echo "Skipping Maven build due to absence of pom.xml"
+  fi
 
-          if [ -z "$MAVEN_ARGS" ]; then
-            export MAVEN_ARGS="clean install -Popenshift -DskipTests"
-          fi
-
-          echo "Found pom.xml... attempting to build with 'mvn -e ${MAVEN_ARGS}'"
-
-          if [ -n "$MAVEN_SETTINGS_FILE" ]
-          then
-              mvn --global-settings $MAVEN_SETTINGS_FILE --version
-              mvn --global-settings $MAVEN_SETTINGS_FILE $MAVEN_ARGS 
-          else
-              mvn --version
-              mvn $MAVEN_ARGS
-          fi
-          popd > /dev/null
-
-          CART_NAME=${cartridge_type}
-      fi
-
-      if [ ! -f ${OPENSHIFT_REPO_DIR}pom.xml ]; then
-        echo "Skipping Maven build due to absence of pom.xml"
-      fi
-
-      if marker_present "skip_maven_build"; then
-        echo "skip_maven_build marker found; build will be skipped"
-      fi
-
+  if marker_present "skip_maven_build"; then
+    echo "skip_maven_build marker found; build will be skipped"
   fi
 
 }
