@@ -14,6 +14,8 @@ Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 Requires:      java-1.7.0-openjdk
 Requires:      java-1.7.0-openjdk-devel
+Requires:      httpd
+Requires:      maven3
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
