@@ -1,5 +1,5 @@
 Name: fuse-builder
-Cartridge-Short-Name: fuse-builder
+Cartridge-Short-Name: BUILDER
 Display-Name: JBoss Fuse Builder 6.1.0 EA
 Description: "Runs a JBoss Fuse Builder on OpenShift."
 Version: '1.0.0'
@@ -20,6 +20,7 @@ Compatible-Versions:
 Cartridge-Vendor: redhat
 Vendor: redhat
 Categories:
+  - web_framework
   - xpaas
   - java
 Provides:
@@ -27,9 +28,6 @@ Provides:
 Scaling:
   Min: 1
   Max: 3
-Group-Overrides:
-  - components:
-    - httpd
 Endpoints:
   - Private-IP-Name:   IP
     Private-Port-Name: PORT

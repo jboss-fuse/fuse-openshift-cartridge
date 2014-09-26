@@ -2,28 +2,28 @@
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 function start {
-    /usr/sbin/httpd -f $OPENSHIFT_MVNREPO_DIR/etc/httpd.conf -k start
+    /usr/sbin/httpd -f $OPENSHIFT_BUILDER_DIR/etc/httpd.conf -k start
 }
 
 function stop {
-    /usr/sbin/httpd -f $OPENSHIFT_MVNREPO_DIR/etc/httpd.conf -k stop
+    /usr/sbin/httpd -f $OPENSHIFT_BUILDER_DIR/etc/httpd.conf -k stop
 }
 
 function restart {
-    /usr/sbin/httpd -f $OPENSHIFT_MVNREPO_DIR/etc/httpd.conf -k restart
+    /usr/sbin/httpd -f $OPENSHIFT_BUILDER_DIR/etc/httpd.conf -k restart
 }
 
 function build() {
   
   # restart the http server so it can pick up any config changes.
-  ${OPENSHIFT_MVNREPO_DIR}/bin/control restart 
+  ${OPENSHIFT_BUILDER_DIR}/bin/control restart 
   
   echo "Building $cartridge_type cartridge"
 
-  MAVEN_SETTINGS_FILE="${OPENSHIFT_MVNREPO_DIR}/etc/settings.xml"
+  MAVEN_SETTINGS_FILE="${OPENSHIFT_BUILDER_DIR}/etc/settings.xml"
   if $(echo $OPENSHIFT_GEAR_DNS | egrep -qe "\.rhcloud\.com")
   then
-      MAVEN_SETTINGS_FILE="${OPENSHIFT_MVNREPO_DIR}/etc/rhcloud.settings.xml"
+      MAVEN_SETTINGS_FILE="${OPENSHIFT_BUILDER_DIR}/etc/rhcloud.settings.xml"
   fi
 
   max_memory_mb=${OPENSHIFT_GEAR_MEMORY_MB}
