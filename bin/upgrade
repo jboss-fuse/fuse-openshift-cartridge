@@ -114,7 +114,7 @@ function is_running() {
 }
 
 function wait_for_stop() {
-    for i in {1..$2}; do
+    for i in $(seq 1 $2); do
         if ! ps -p $1 > /dev/null; then
             rm $FUSE_PID_FILE
             break
