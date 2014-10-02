@@ -18,6 +18,7 @@ Requires:      openshift-origin-node-util
 Requires:      rubygem-openshift-origin-frontend-haproxy-sni-proxy
 Requires:      java-1.7.0-openjdk
 Requires:      java-1.7.0-openjdk-devel
+Requires:      bc
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
