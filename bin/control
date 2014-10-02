@@ -22,7 +22,7 @@ function build() {
   echo ${BUILD_NUMBER} > ${BUILD_NUMBER_FILE}
   
   # restart the http server so it can pick up any config changes.
-  ${OPENSHIFT_BUILDER_DIR}/bin/control restart 
+  ${OPENSHIFT_BUILDER_DIR}/bin/control restart
 
   MAVEN_SETTINGS_FILE="${OPENSHIFT_BUILDER_DIR}/etc/settings.xml"
   if $(echo $OPENSHIFT_GEAR_DNS | egrep -qe "\.rhcloud\.com")
