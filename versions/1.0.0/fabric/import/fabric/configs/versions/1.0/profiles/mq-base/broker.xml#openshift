@@ -106,13 +106,13 @@
         <property name="portMapping">
           <map>
             <entry key="${OPENSHIFT_FUSE_OPENWIRE_PORT}" value="${OPENSHIFT_FUSE_OPENWIRE_PROXY_PORT}"/>
-            <entry key="${OPENSHIFT_FUSE_MQTT_PORT}" value="${OPENSHIFT_FUSE_MQTT_PROXY_PORT}"/>
-            <entry key="${OPENSHIFT_FUSE_AMQP_PORT}" value="${OPENSHIFT_FUSE_AMQP_PROXY_PORT}"/>
             <entry key="${OPENSHIFT_FUSE_STOMP_PORT}" value="${OPENSHIFT_FUSE_STOMP_PROXY_PORT}"/>
+            <entry key="${OPENSHIFT_FUSE_AMQP_PORT}" value="${OPENSHIFT_FUSE_AMQP_PROXY_PORT}"/>
+            <entry key="${OPENSHIFT_FUSE_MQTT_PORT}" value="${OPENSHIFT_FUSE_MQTT_PROXY_PORT}"/>
             <entry key="${OPENSHIFT_FUSE_OPENWIRE_SSL_PORT}" value="2303"/>
-            <entry key="${OPENSHIFT_FUSE_MQTT_SSL_PORT}" value="2304"/>
+            <entry key="${OPENSHIFT_FUSE_STOMP_SSL_PORT}" value="2304"/>
             <entry key="${OPENSHIFT_FUSE_AMQP_SSL_PORT}" value="2305"/>
-            <entry key="${OPENSHIFT_FUSE_STOMP_SSL_PORT}" value="2306"/>
+            <entry key="${OPENSHIFT_FUSE_MQTT_SSL_PORT}" value="2306"/>
           </map>
         </property>
     </bean>
