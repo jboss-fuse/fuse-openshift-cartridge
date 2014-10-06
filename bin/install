@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+if [ -z "${OPENSHIFT_FUSE_DOMAIN_DNS:-}" ]; then
+  client_error "Command Failed: OPENSHIFT_FUSE_DOMAIN_DNS not set."
+  exit 1
+fi
+if [ -z "${OPENSHIFT_FUSE_DOMAIN_PASSWORD:-}" ]; then
+  client_error "Command Failed: OPENSHIFT_FUSE_DOMAIN_PASSWORD not set."
+  exit 1
+fi
