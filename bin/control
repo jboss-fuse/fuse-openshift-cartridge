@@ -67,15 +67,15 @@ function build() {
         export MAVEN_ARGS="clean install -Popenshift -DskipTests"
       fi
 
-      echo "Found pom.xml... attempting to build with 'mvn -e ${MAVEN_ARGS}'"
+      echo "Found pom.xml... attempting to build with 'mvn -e ${MAVEN_ARGS}'" | tee -a "${OPENSHIFT_LOG_DIR}maven.log"
 
       if [ -n "$MAVEN_SETTINGS_FILE" ]
       then
-          mvn --global-settings $MAVEN_SETTINGS_FILE --version
-          mvn --global-settings $MAVEN_SETTINGS_FILE $MAVEN_ARGS -Dbuild.number=${BUILD_NUMBER} -Dbuild.number.padded=${BUILD_NUMBER_PADDED}
+          mvn --global-settings $MAVEN_SETTINGS_FILE --version | tee -a "${OPENSHIFT_LOG_DIR}maven.log"
+          mvn --global-settings $MAVEN_SETTINGS_FILE $MAVEN_ARGS -Dbuild.number=${BUILD_NUMBER} -Dbuild.number.padded=${BUILD_NUMBER_PADDED} | tee -a "${OPENSHIFT_LOG_DIR}maven.log"
       else
-          mvn --version
-          mvn $MAVEN_ARGS -Dbuild.number=${BUILD_NUMBER} -Dbuild.number.padded=${BUILD_NUMBER_PADDED}
+          mvn --version | tee ${OPENSHIFT_LOG_DIR}maven.log
+          mvn $MAVEN_ARGS -Dbuild.number=${BUILD_NUMBER} -Dbuild.number.padded=${BUILD_NUMBER_PADDED} | tee -a "${OPENSHIFT_LOG_DIR}maven.log"
       fi
       popd > /dev/null
 
