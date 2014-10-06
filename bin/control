@@ -201,7 +201,7 @@ case "$1" in
     ;;
   post-restore)
     sleep 5
-    if -f ${OPENSHIFT_FUSE_DIR}/container/data; then
+    if [ -d ${OPENSHIFT_FUSE_DIR}/container/data ]; then
         # data dir got restored so clean up
         rm -rf ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak
         mv ${OPENSHIFT_FUSE_DIR}/container/data ${OPENSHIFT_FUSE_DIR}/container/data.restore.bak
