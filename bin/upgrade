@@ -1,11 +1,6 @@
-#!/bin/bash -eu
+#!/bin/bash
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
-
-# these are not used yet...
-#fuse_version=$1
-#curr=$2
-#next=$3
 
 FUSE_BIN_DIR=${OPENSHIFT_FUSE_DIR}/container/bin
 FUSE_PATCH_DIR=${OPENSHIFT_FUSE_DIR}/patches
@@ -81,7 +76,7 @@ function is_fabric_provisioned() {
      if ps -p $PID > /dev/null; then
        retries=300
        fabric_loaded=0
-       while [ $retries -gt 0 ]; do
+       while [ $retries -gt 1 ]; do
           curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/FabricServiceStatus | grep '"provisionComplete":true' > /dev/null
           [ $? -eq 0 ] && fabric_loaded=1 && break
           let retries=$retries-1
@@ -125,41 +120,46 @@ function wait_for_stop() {
 }
 
 patch_applied=0
+try_restart=0
 
 if [ -d $FUSE_PATCH_DIR ]; then
   if is_running; then
     files=$(find $FUSE_PATCH_DIR -name "*.zip")
-    for i in $files ; do
-      if [ -d $i ]; then
+    for patch in $files ; do
+      if [ -d $patch ]; then
         continue
       fi
-      if [[ $i == *.zip ]]; then
+      if [[ $patch == *.zip ]]; then
         client_message "Waiting for container to be provisioned..."
-        retries=20
-        while [ $retries -gt 1 ]; do
-          if ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'dev:wait-for-service "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=fabric)(osgi.command.function=wait-for-provisioning))"'; then
-            break;
+        if is_fabric_provisioned; then
+
+          client_message "Waiting for patching service to become available..."
+
+          ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'dev:wait-for-service --timeout 240000 "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=fabric)(osgi.command.function=patch-apply))"'
+          
+          if [ "$?" -eq 0 ]; then
+            client_message "Patching all profile versions with ${patch}"
+
+            ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} "fabric:patch-apply --all-versions file:${patch}"
+            if [ "$?" -eq 0 ]; then
+              patch_applied=1
+              # only want to apply successful patches once
+              rm $patch
+              touch "${patch}.applied"
+            else
+              client_message "Patch was not succesfully applied. You can try to apply this patch again on the container shell using: "
+              client_message "fabric:patch-apply --all-versions file:${patch}"
+              return 1
+            fi
+          else
+            # patch could have already been applied from another app so lets try to restart it in case it hung
+            client_message "Patching service was unavailable so could not apply patch."
+            try_restart=1
           fi
-          let retries=$retries-1
-          sleep 5
-        done
-
-        ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'fabric:wait-for-provisioning --verbose --provision-timeout 120000'     
-        ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'dev:wait-for-service --timeout 240000 "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=fabric)(osgi.command.function=patch-apply))"'
-
-        client_message "Patching all profile versions with ${i}"
-
-        ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} "fabric:patch-apply --all-versions file:${i}"
-        if [ "$?" -eq 0 ]; then
-          patch_applied=1
-          # only want to apply successful patches once
-          rm $i
-          touch "${i}.applied"
         else
-          client_message "Patch was not succesfully applied. You can try to apply this patch again on the container shell using: "
-          client_message "fabric:patch-apply --all-versions file:${i}"
-
-          return 1
+          # patch could have already been applied from another app so lets try to restart it in case it hung
+          client_message "Container was not fully provisioned so could not apply patch."
+          try_restart=1
         fi
       fi
     done
@@ -172,5 +172,12 @@ if [ "$patch_applied" -eq 1 ]; then
   if ! is_fabric_provisioned; then
     client_message "${OPENSHIFT_APP_NAME} fabric needs to be restarted to complete installation of patch."
     restart
+    return 0
   fi
+fi
+
+if [ "$try_restart" -eq 1 ]; then
+    client_message "${OPENSHIFT_APP_NAME} fabric needs to be restarted to complete installation of patch."
+    restart
+    return 0
 fi
