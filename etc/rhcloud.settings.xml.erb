@@ -18,7 +18,7 @@
     <profile>
       <id>openshift</id>
       <properties>
-        <fabric8.jolokiaUrl>http://<%= ENV['OPENSHIFT_FUSE_DOMAIN_DNS'] %>/jolokia</fabric8.jolokiaUrl>
+        <fabric8.jolokiaUrl>http://<%= ENV['OPENSHIFT_FUSE_DOMAIN_DNS'] %>:<%= ENV['OPENSHIFT_FUSE_DOMAIN_HTTP_PORT'] %>/jolokia</fabric8.jolokiaUrl>
       </properties>
       <repositories>
         <repository>
