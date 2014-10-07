@@ -1,7 +1,7 @@
 Name: amq
 Cartridge-Short-Name: AMQ
-Display-Name: JBoss AMQ 6.1.1 for xPaaS
-Description: "Runs a JBoss AMQ container on OpenShift."
+Display-Name: "JBoss A-MQ 6.1.1 for xPaaS"
+Description: "Runs a JBoss A-MQ container on OpenShift."
 Version: '6.1.1'
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
