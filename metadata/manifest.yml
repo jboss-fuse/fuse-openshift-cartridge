@@ -1,6 +1,6 @@
 Name: fuse
 Cartridge-Short-Name: FUSE
-Display-Name: JBoss Fuse 6.1.0 EA
+Display-Name: JBoss Fuse 6.1.1
 Description: "Runs a JBoss Fuse container on OpenShift."
 Version: '6.1.1'
 License: "ASL 2.0"
