@@ -1009,4 +1009,4 @@ BrowserMatch "^Dreamweaver-WebDAV-SCM1" redirect-carefully
 #    CustomLog logs/dummy-host.example.com-access_log common
 #</VirtualHost>
 
-Include "<%= ENV['OPENSHIFT_REPO_DIR']%>.openshift/httpd.conf"
+Include "<%= ENV['OPENSHIFT_REPO_DIR']%>.openshift/config/httpd.conf"
