@@ -153,6 +153,8 @@ fi
 if [ ! -z "${OPENSHIFT_FUSE_PASSWORD:-}" ]; then
     if [ ${#OPENSHIFT_FUSE_PASSWORD} -gt 5 ]; then
       client_result "Using provided password from cartridge"
+      export OPENSHIFT_FUSE_PASSWORD
+      set_env_var OPENSHIFT_FUSE_PASSWORD "${OPENSHIFT_FUSE_PASSWORD}" env
     else
       client_error "Command Failed: provided password must be at least 6 characters"
       exit 1
