@@ -54,6 +54,28 @@ function restart() {
     start
 }
 
+function has_fabric_profile() {
+   retries=60
+   fabric_loaded=0
+   while [ $retries -gt 1 ]; do
+      content=`curl -s "http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/exec/io.fabric8:type=Fabric/getContainer(java.lang.String)/${OPENSHIFT_APP_NAME}"`
+      echo $content | grep '"status":200' > /dev/null
+      if [ $? -eq 0 ]; then
+        echo $content | sed 's/.*profiles\(.*\)ensembleServer.*/\1/g' | grep '"fabric"' > /dev/null
+        if [ $? -eq 0 ]; then
+          fabric_loaded=1
+        fi
+        break
+      fi
+      let retries=$retries-1
+      sleep 5
+   done
+   if [ $fabric_loaded -eq 1 ]; then
+     return 0;
+   fi
+   return 1;
+}
+
 function is_fabric_provisioned() {
   for i in {1..20};
      do
@@ -131,6 +153,14 @@ if [ -d $FUSE_PATCH_DIR ]; then
         continue
       fi
       if [[ $patch == *.zip ]]; then
+
+        if ! has_fabric_profile; then
+          client_message "${OPENSHIFT_APP_NAME} does not have the fabric profile so will recieve patches from the ensemble server."
+          rm $patch
+          touch "${patch}.applied"
+          exit 0
+        fi
+
         client_message "Waiting for patching service to become available..."
 
         ${FUSE_BIN_DIR}/client -r 30 -d 5 -h ${OPENSHIFT_FUSE_IP} -u admin -p ${password} 'dev:wait-for-service --timeout 300000 "(&(objectClass=org.apache.felix.service.command.Function)(osgi.command.scope=fabric)(osgi.command.function=patch-apply))"'
@@ -147,7 +177,7 @@ if [ -d $FUSE_PATCH_DIR ]; then
           else
             client_message "Patch was not succesfully applied. You can try to apply this patch again on the container shell using: "
             client_message "fabric:patch-apply --all-versions file:${patch}"
-            return 1
+            exit 1
           fi
         else
           # patch could have already been applied from another app so lets try to restart it in case it hung
@@ -165,12 +195,12 @@ if [ "$patch_applied" -eq 1 ]; then
   if ! is_fabric_provisioned; then
     client_message "${OPENSHIFT_APP_NAME} fabric needs to be restarted to complete installation of patch."
     restart
-    return 0
+    exit 0
   fi
 fi
 
 if [ "$try_restart" -eq 1 ]; then
     client_message "${OPENSHIFT_APP_NAME} fabric needs to be restarted to complete provisioning."
     restart
-    return 0
+    exit 0
 fi
