@@ -258,7 +258,7 @@ cart_props "password=${OPENSHIFT_FUSE_PASSWORD}"
 ${FUSE_BIN_DIR}/start
 if $join; then
     wait_for_start
-    retries=20
+    retries=40
     while [ $retries -gt 1 ]; do
       if ${FUSE_BIN_DIR}/client -r 5 -d 5 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"; then
         break;
