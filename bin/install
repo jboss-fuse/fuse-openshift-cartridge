@@ -256,6 +256,11 @@ EOF
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_PASSWORD=${OPENSHIFT_FUSE_PASSWORD}"    
 fi
 
+if  [ ! -z "${OPENSHIFT_FUSE_CREATED_FROM_FABRIC:-}" ]; then
+    client_result "App creation initiated from fabric so will join fabric automatically"
+    join=false
+fi
+
 OPENSHIFT_FUSE_CONSOLE_URL="https://${OPENSHIFT_FUSE_DOMAIN_DNS}"
 if [ -f ${FUSE_BRANDING_FILE} ]; then
   OPENSHIFT_FUSE_DISTRO_VERSION=`ls -1 $OPENSHIFT_FUSE_DIR/container/system/org/jboss/amq/mq-fabric | tail -n 1`
