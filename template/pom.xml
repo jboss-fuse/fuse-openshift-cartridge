@@ -281,6 +281,13 @@
                               </goals>
                           </execution>
                       </executions>
+                      <dependencies>
+                          <dependency>
+                              <groupId>org.slf4j</groupId>
+                              <artifactId>slf4j-simple</artifactId>
+                              <version>${slf4j-version}</version>
+                          </dependency>
+                      </dependencies>
                   </plugin>
               </plugins>
           </build>
