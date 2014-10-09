@@ -1,7 +1,9 @@
 Name: fuse-builder
 Cartridge-Short-Name: BUILDER
 Display-Name: JBoss Fuse Builder 6.1.0 EA
-Description: "Runs a JBoss Fuse Builder on OpenShift."
+Description: |
+  The Fuse Builder cartridge builds Maven artifacts pushed to its git repository for JBoss Fuse and JBoss A-MQ applications and makes them available via an HTTP server.
+  You must deploy at least one JBoss A-MQ or JBoss Fuse cartridge in the OpenShift Enterprise domain before you deploy this cartridge."
 Version: '1.0.0'
 License: "ASL 2.0"
 License-Url: http://www.apache.org/licenses/LICENSE-2.0.txt
