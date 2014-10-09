@@ -1,18 +1,18 @@
-%global product_build_number 401
+%global product_build_number 403
 
 %global cartridgedir %{_libexecdir}/openshift/cartridges/amq
 %global frameworkdir %{_libexecdir}/openshift/cartridges/amq
 %global github_tag openshift-enterprise-amq-rpm-6.1
 
 Name: openshift-origin-cartridge-amq
-Version: 6.1.0.redhat.%{product_build_number}
+Version: 6.1.1.redhat.%{product_build_number}
 Release: 1%{?dist}
 Summary: A-MQ cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
 Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/%{github_tag}.zip
-Source1: https://repository.jboss.org/nexus/content/groups/ea/org/jboss/amq/jboss-a-mq/6.1.0.redhat-%{product_build_number}/jboss-a-mq-6.1.0.redhat-%{product_build_number}.zip
+Source1: https://repository.jboss.org/nexus/content/groups/ea/org/jboss/amq/jboss-a-mq/6.1.1.redhat-%{product_build_number}/jboss-a-mq-6.1.1.redhat-%{product_build_number}.zip
 
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
