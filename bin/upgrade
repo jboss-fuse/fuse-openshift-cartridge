@@ -61,7 +61,7 @@ function has_fabric_profile() {
       content=`curl -s "http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/exec/io.fabric8:type=Fabric/getContainer(java.lang.String)/${OPENSHIFT_APP_NAME}"`
       echo $content | grep '"status":200' > /dev/null
       if [ $? -eq 0 ]; then
-        echo $content | sed 's/.*profiles\(.*\)ensembleServer.*/\1/g' | grep '"fabric"' > /dev/null
+        echo $content | sed 's/.*profiles\(.*\)ensembleServer.*/\1/g' | grep 'fabric' > /dev/null
         if [ $? -eq 0 ]; then
           fabric_loaded=1
         fi
