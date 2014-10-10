@@ -3,8 +3,8 @@
 %global github_tag openshift-enterprise-fuse-builder-rpm-6.1
 
 Name: openshift-origin-cartridge-fuse-builder
-Version: 6.1.0.redhat
-Release: 2%{?dist}
+Version: 6.1.1.redhat
+Release: 1%{?dist}
 Summary: Fuse Builder cartridge
 Group: Development/Languages
 License: ASL 2.0
