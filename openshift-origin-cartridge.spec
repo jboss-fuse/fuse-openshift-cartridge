@@ -6,14 +6,14 @@
 
 Name: openshift-origin-cartridge-amq
 Version: 6.1.1.redhat.%{product_build_number}
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A-MQ cartridge
 Group: Development/Languages
 License: ASL 2.0
 URL: https://www.openshift.com
 Source0: https://github.com/jboss-fuse/fuse-openshift-cartridge/archive/%{github_tag}.zip
 Source1: https://repository.jboss.org/nexus/content/groups/ea/org/jboss/amq/jboss-a-mq/6.1.1.redhat-%{product_build_number}/jboss-a-mq-6.1.1.redhat-%{product_build_number}.zip
-
+Source2: https://repository.jboss.org/nexus/content/groups/ea/io/fabric8/fabric-openshift/1.0.0.redhat-%{product_build_number}/fabric-openshift-1.0.0.redhat-%{product_build_number}.jar
 Requires:      rubygem(openshift-origin-node)
 Requires:      openshift-origin-node-util
 Requires:      rubygem-openshift-origin-frontend-haproxy-sni-proxy
@@ -33,6 +33,11 @@ A-MQ cartridge for openshift.
 
 %build
 unzip %SOURCE1
+# workaround for ENTESB-2081
+if [ ! -d jboss-a-mq-6.1.1.redhat-%{product_build_number}/system/io/fabric8/fabric-openshift ] ; then
+  mkdir -p jboss-a-mq-6.1.1.redhat-%{product_build_number}/system/io/fabric8/fabric-openshift/1.0.0.redhat-%{product_build_number}
+  cp %SOURCE2 jboss-a-mq-6.1.1.redhat-%{product_build_number}/system/io/fabric8/fabric-openshift/1.0.0.redhat-%{product_build_number}/
+fi
 mv jboss-a-mq-* usr
 mkdir -p patches
 
