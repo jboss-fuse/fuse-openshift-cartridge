@@ -1,14 +1,14 @@
 #!/bin/bash -e
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 if [ -z "${OPENSHIFT_FUSE_DOMAIN_DNS:-}" ]; then
-  client_error "Command Failed: OPENSHIFT_FUSE_DOMAIN_DNS not set."
+  client_error "Command Failed: OPENSHIFT_FUSE_DOMAIN_DNS not set.  Try starting a Fuse or A-MQ app first."
   exit 1
 fi
 if [ -z "${OPENSHIFT_FUSE_DOMAIN_PASSWORD:-}" ]; then
-  client_error "Command Failed: OPENSHIFT_FUSE_DOMAIN_PASSWORD not set."
+  client_error "Command Failed: OPENSHIFT_FUSE_DOMAIN_PASSWORD not set.  Try starting a Fuse or A-MQ app first."
   exit 1
 fi
 if [ -z "${OPENSHIFT_FUSE_DOMAIN_HTTP_PORT:-}" ]; then
-  client_error "Command Failed: OPENSHIFT_FUSE_DOMAIN_HTTP_PORT not set."
-  exit 1
+  set_env_var OPENSHIFT_FUSE_DOMAIN_HTTP_PORT "80" env
 fi
