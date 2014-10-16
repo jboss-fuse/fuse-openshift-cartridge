@@ -113,8 +113,8 @@ ensemble.auto.start=false
 agent.auto.start=true
 bind.address=<%= ENV['OPENSHIFT_FUSE_IP'] %>
 publichostname=<%= ENV['OPENSHIFT_GEAR_DNS'] %>
-global.resolver=publichostname
-local.resolver=publichostname
+global.resolver=<%= ENV['OPENSHIFT_FUSE_RESOLVER'] %>
+local.resolver=<%= ENV['OPENSHIFT_FUSE_RESOLVER'] %>
 profiles=hawtio openshift mq-broker-default.<%= ENV['OPENSHIFT_APP_NAME'] %>
 org.osgi.service.http.connection.port=80
 org.osgi.service.http.port=<%= ENV['OPENSHIFT_FUSE_HTTP_PORT'] %>
