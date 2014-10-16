@@ -35,6 +35,9 @@ Cart-Data:
   - Key: OPENSHIFT_FUSE_ZOOKEEPER_URL
     Type: environment
     Description: "The url to zookeeper."
+  - Key: OPENSHIFT_FUSE_RESOLVER
+    Type: environment
+    Description: "The resolver policy to set on the container. Possible values are: localip, localhostname, publicip, publichostname, manualip."
   - Key: OPENSHIFT_FUSE_PASSWORD
     Type: environment
     Description: "The password password to the app."
