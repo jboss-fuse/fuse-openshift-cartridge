@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.jboss.quickstarts.fuse</groupId>
         <artifactId>jboss-quickstarts-fuse-parent</artifactId>
-        <version>6.1.1.redhat-406</version>
+        <version>6.1.1.redhat-410</version>
     </parent>
 
     <!--
