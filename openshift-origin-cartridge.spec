@@ -4,7 +4,7 @@
 
 Name: openshift-origin-cartridge-fuse-builder
 Version: 6.1.1.redhat
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Fuse Builder cartridge
 Group: Development/Languages
 License: ASL 2.0
