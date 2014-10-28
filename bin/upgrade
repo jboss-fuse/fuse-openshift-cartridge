@@ -54,14 +54,14 @@ function restart() {
     start
 }
 
-function has_fabric_profile() {
+function is_ensemble_server() {
    retries=60
    fabric_loaded=0
    while [ $retries -gt 1 ]; do
       content=`curl -s "http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/exec/io.fabric8:type=Fabric/getContainer(java.lang.String)/${OPENSHIFT_APP_NAME}"`
       echo $content | grep '"status":200' > /dev/null
       if [ $? -eq 0 ]; then
-        echo $content | sed 's/.*profiles\(.*\)ensembleServer.*/\1/g' | grep 'fabric' > /dev/null
+        echo $content | grep '"ensembleServer":true' > /dev/null
         if [ $? -eq 0 ]; then
           fabric_loaded=1
         fi
@@ -154,8 +154,8 @@ if [ -d $FUSE_PATCH_DIR ]; then
       fi
       if [[ $patch == *.zip ]]; then
 
-        if ! has_fabric_profile; then
-          client_message "${OPENSHIFT_APP_NAME} does not have the fabric profile so will recieve patches from the ensemble server."
+        if ! is_ensemble_server; then
+          client_message "${OPENSHIFT_APP_NAME} will recieve patches when the ensemble server is patched."
           rm $patch
           touch "${patch}.applied"
           exit 0
