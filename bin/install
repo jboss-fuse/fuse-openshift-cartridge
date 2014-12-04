@@ -113,15 +113,12 @@ for i in $files ; do
 done
 
 # Remove Unsupported Profiles
-cd $OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles
-rm -rf controller-jon-server controller-rhq-agent controller-tomcat controller-wildfly openshift-jbossews.1 openshift-jbossews.2 docker
-rm -rf gateway-haproxy gateway-http gateway-mq
-rm -rf hadoop-base hadoop-datanode hadoop-namenode
-# rm -rf insight insight-camel insight-core insight-hdfs insight-jetty insight-kibana
-rm -rf jboss-brms-controller-tomcat jboss-brms-controller-wildfly jboss-brms-feature-workbench jboss-brms-feature-workbench.openshift
-# rm -rf mq-replicated
-rm -rf openshift-aerogear-pushserver
-rm -rf jboss-jbossews-hawtio
+cd $OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/profiles
+rm -rf controller/jon controller/rhq controller/tomcat.profile controller/wildfly.profile openshift/jbossews.1.profile openshift/jbossews.2.profile docker.profile
+rm -rf gateway
+rm -rf hadoop
+rm -rf containers/jbpm
+rm -rf openshift/aerogear/pushserver.profile
 
 cd $OPENSHIFT_FUSE_DIR
 
@@ -219,8 +216,8 @@ else
     echo "zookeeper.server.connection.port=${OPENSHIFT_FUSE_ZOOKEEPER_PROXY_PORT}" >> $FUSE_SYSPROPS_FILE
     
     # Lets create a self signed cert for SSL
-    FUSE_KEYSTORE_FILE="$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/default/keystore.jks"
-    FUSE_CERT_FILE="$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/default/keystore.cert"
+    FUSE_KEYSTORE_FILE="$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/profiles/default.profile/keystore.jks"
+    FUSE_CERT_FILE="$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/profiles/default.profile/keystore.cert"
     keytool -genkey -storetype JKS -storepass "${OPENSHIFT_FUSE_PASSWORD}" -keystore "${FUSE_KEYSTORE_FILE}" -keypass "${OPENSHIFT_FUSE_PASSWORD}" -alias "${OPENSHIFT_GEAR_DNS}" -keyalg RSA -keysize 4096 -dname "cn=*-${OPENSHIFT_NAMESPACE}.${OPENSHIFT_CLOUD_DOMAIN}" -validity 3650
     keytool -exportcert -keystore "${FUSE_KEYSTORE_FILE}" -alias ${OPENSHIFT_GEAR_DNS} -storepass "${OPENSHIFT_FUSE_PASSWORD}" --rfc > "${FUSE_CERT_FILE}"
     FUSE_CERT=`cat "${FUSE_CERT_FILE}"`
