@@ -24,12 +24,20 @@
     <!-- Allows us to use system properties and fabric as variables in this configuration file -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
-            <bean class="org.fusesource.mq.fabric.ConfigurationProperties"/>
+            <bean class="io.fabric8.mq.fabric.ConfigurationProperties"/>
         </property>
         <property name="searchSystemEnvironment" value="true"/>
     </bean>
 
-    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="${broker-name}" dataDirectory="${data}" start="false" restartAllowed="false">
+    <bean id="addressPolicy" class="org.apache.activemq.broker.PublishedAddressPolicy">
+        <property name="portMapping">
+          <map>
+            <entry key="${bindPort}" value="${connectionPort}"/>
+          </map>
+        </property>
+    </bean>
+
+    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="${broker-name}" dataDirectory="${data}" start="false">
 
         <destinationPolicy>
             <policyMap>
@@ -50,16 +58,7 @@
         </managementContext>
 
         <persistenceAdapter>
-            <replicatedLevelDB directory="${data}/leveldb/${karaf.name}"
-              replicas="${replicas}"
-              zkAddress="${zookeeper.url}"
-              zkPassword="${zookeeper.password}"
-              zkPath="/fabric/registry/clusters/fusemq-replication-elections/${group}"
-              securityToken="${zookeeper.password}"
-              container="${container.id}"
-              bind="tcp://${bind.address}:${OPENSHIFT_FUSE_REPLICATION_PORT}"
-              connectUrl="tcp://${OPENSHIFT_GEAR_DNS}:${OPENSHIFT_FUSE_REPLICATION_PROXY_PORT}"
-              />
+            <kahaDB directory="${data}/kahadb"/>
         </persistenceAdapter>
 
         <plugins>
@@ -80,6 +79,7 @@
             </systemUsage>
         </systemUsage>
 
+
         <sslContext>
             <sslContext
                 keyStore="${keystore.url}"
@@ -90,24 +90,24 @@
         </sslContext>
 
         <transportConnectors>
-            <transportConnector name="openwire"     publishedAddressPolicy="#addressPolicy"   
+            <transportConnector name="openwire"     publishedAddressPolicy="#addressPolicy"
                                 uri="tcp://${bind.address}:${OPENSHIFT_FUSE_OPENWIRE_PORT}"/>
-            <transportConnector name="mqtt"         publishedAddressPolicy="#addressPolicy"   
+            <transportConnector name="mqtt"         publishedAddressPolicy="#addressPolicy"
                                 uri="mqtt://${bind.address}:${OPENSHIFT_FUSE_MQTT_PORT}"/>
-            <transportConnector name="amqp"         publishedAddressPolicy="#addressPolicy"   
+            <transportConnector name="amqp"         publishedAddressPolicy="#addressPolicy"
                                 uri="amqp://${bind.address}:${OPENSHIFT_FUSE_AMQP_PORT}"/>
-            <transportConnector name="stomp"        publishedAddressPolicy="#addressPolicy"   
+            <transportConnector name="stomp"        publishedAddressPolicy="#addressPolicy"
                                 uri="stomp://${bind.address}:${OPENSHIFT_FUSE_STOMP_PORT}"/>
-            <transportConnector name="openwire-ssl" publishedAddressPolicy="#addressPolicy"   
+            <transportConnector name="openwire-ssl" publishedAddressPolicy="#addressPolicy"
                                 uri="ssl://${bind.address}:${OPENSHIFT_FUSE_OPENWIRE_SSL_PORT}"/>
-            <transportConnector name="mqtt-ssl"     publishedAddressPolicy="#addressPolicy"   
+            <transportConnector name="mqtt-ssl"     publishedAddressPolicy="#addressPolicy"
                                 uri="mqtt+ssl://${bind.address}:${OPENSHIFT_FUSE_MQTT_SSL_PORT}"/>
-            <transportConnector name="amqp-ssl"     publishedAddressPolicy="#addressPolicy"   
+            <transportConnector name="amqp-ssl"     publishedAddressPolicy="#addressPolicy"
                                 uri="amqp+ssl://${bind.address}:${OPENSHIFT_FUSE_AMQP_SSL_PORT}"/>
-            <transportConnector name="stomp-ssl"    publishedAddressPolicy="#addressPolicy"   
+            <transportConnector name="stomp-ssl"    publishedAddressPolicy="#addressPolicy"
                                 uri="stomp+ssl://${bind.address}:${OPENSHIFT_FUSE_STOMP_SSL_PORT}"/>
         </transportConnectors>
-        
+
     </broker>
 
     <bean id="addressPolicy" class="org.apache.activemq.broker.PublishedAddressPolicy">
@@ -124,6 +124,4 @@
           </map>
         </property>
     </bean>
-
 </beans>
-
