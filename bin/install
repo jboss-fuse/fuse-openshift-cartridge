@@ -84,6 +84,10 @@ echo "$version" > "$OPENSHIFT_FUSE_DIR/env/OPENSHIFT_FUSE_VERSION"
 #Extract the distro
 cd $OPENSHIFT_FUSE_DIR
 
+# workaround for ENTESB-2239
+mkdir ../.m2/
+cp -r $OPENSHIFT_FUSE_DIR/usr/system ../.m2/repository
+
 mkdir $OPENSHIFT_FUSE_DIR/container
 cd $OPENSHIFT_FUSE_DIR/usr
 nonshared=("bin" "etc" "data" "deploy" "fabric" "instances" "lib" "quickstarts")
