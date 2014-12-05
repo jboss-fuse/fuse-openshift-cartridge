@@ -58,7 +58,7 @@ function is_ensemble_server() {
    retries=60
    fabric_loaded=0
    while [ $retries -gt 1 ]; do
-      content=`curl -s "http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/exec/io.fabric8:type=Fabric/getContainer(java.lang.String)/${OPENSHIFT_APP_NAME}"`
+      content=`curl -s "http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:80/jolokia/exec/io.fabric8:type=Fabric/getContainer(java.lang.String)/${OPENSHIFT_APP_NAME}"`
       echo $content | grep '"status":200' > /dev/null
       if [ $? -eq 0 ]; then
         echo $content | grep '"ensembleServer":true' > /dev/null
@@ -100,7 +100,7 @@ function is_fabric_provisioned() {
        fabric_loaded=0
        while [ $retries -gt 1 ]; do
           # only check whether the current container has provisioned sucessfully
-          curl -s "http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/exec/io.fabric8:type=Fabric/getContainer(java.lang.String)/${OPENSHIFT_APP_NAME}" | grep '"provisionResult":"success"' > /dev/null
+          curl -s "http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:80/jolokia/exec/io.fabric8:type=Fabric/getContainer(java.lang.String)/${OPENSHIFT_APP_NAME}" | grep '"provisionResult":"success"' > /dev/null
           [ $? -eq 0 ] && fabric_loaded=1 && break
           let retries=$retries-1
           sleep 5
