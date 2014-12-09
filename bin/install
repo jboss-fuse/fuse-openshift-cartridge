@@ -176,7 +176,7 @@ else
 fi
 
 # Store password
-echo "admin=${OPENSHIFT_FUSE_PASSWORD},admin" > $FUSE_USRPROPS_FILE
+echo "admin=${OPENSHIFT_FUSE_PASSWORD},admin,manager,viewer,Operator, Maintainer, Deployer, Auditor, Administrator, SuperUser" > $FUSE_USRPROPS_FILE
 echo "${OPENSHIFT_FUSE_PASSWORD}" > $FUSE_PASSWD_FILE
 echo "zookeeper.password=${OPENSHIFT_FUSE_PASSWORD}" >> $FUSE_SYSPROPS_FILE
 
