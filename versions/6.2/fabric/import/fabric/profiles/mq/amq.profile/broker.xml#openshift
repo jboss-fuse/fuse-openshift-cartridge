@@ -29,14 +29,6 @@
         <property name="searchSystemEnvironment" value="true"/>
     </bean>
 
-    <bean id="addressPolicy" class="org.apache.activemq.broker.PublishedAddressPolicy">
-        <property name="portMapping">
-          <map>
-            <entry key="${bindPort}" value="${connectionPort}"/>
-          </map>
-        </property>
-    </bean>
-
     <broker xmlns="http://activemq.apache.org/schema/core" brokerName="${broker-name}" dataDirectory="${data}" start="false">
 
         <destinationPolicy>
