@@ -141,6 +141,7 @@ echo "karaf.shutdown.port=${OPENSHIFT_FUSE_SHUTDOWN_PORT}" >> container/etc/conf
 echo "felix.threading.timeout=0" >> container/etc/config.properties
 
 echo "karaf.log.dir=${OPENSHIFT_FUSE_LOG_DIR}" >> container/etc/system.properties
+echo "karaf.history=${OPENSHIFT_FUSE_DIR}/karaf.history" >> container/etc/system.properties
 
 # reduce transient bundles loaded on start before fabric is created
 cat container/etc/org.apache.karaf.features.cfg | sed 's/featuresBoot.*/featuresBoot=jasypt-encryption,config,management,fabric/' > container/etc/org.apache.karaf.features.cfg.mod || :
