@@ -232,12 +232,12 @@ else
     FUSE_CERT=`cat "${FUSE_CERT_FILE}"`
     
     # We need to create a broker profile that match the what mq-create would generate:
-    mkdir -p "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile"
-    cat > "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile/io.fabric8.agent.properties" <<EOF
+    mkdir -p "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile"
+    cat > "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile/io.fabric8.agent.properties" <<EOF
 #Profile:mq-broker-default.${OPENSHIFT_APP_NAME}
 attribute.parents = mq-base
 EOF
-    cat > "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/configs/versions/1.0/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile/org.fusesource.mq.fabric.server-bar.properties" <<EOF
+    cat > "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile/io.fabric8.mq.fabric.server-bar.properties" <<EOF
 standby.pool = default
 connectors = openwire
 broker-name = ${OPENSHIFT_APP_NAME}
