@@ -157,19 +157,19 @@ Endpoints:
     Options:           { "ssl_to_gear": true }
 
   - Private-IP-Name:   IP
-    Private-Port-Name: APP_PORT_1
+    Private-Port-Name: APP_1_PORT
     Private-Port:      3001
-    Public-Port-Name:  APP_PORT_1_PROXY_PORT
+    Public-Port-Name:  APP_1_PROXY_PORT
     Options:           { "ssl_to_gear": true }
   - Private-IP-Name:   IP
-    Private-Port-Name: APP_PORT_2
+    Private-Port-Name: APP_2_PORT
     Private-Port:      3002
-    Public-Port-Name:  APP_PORT_2_PROXY_PORT
+    Public-Port-Name:  APP_2_PROXY_PORT
     Options:           { "ssl_to_gear": true }
   - Private-IP-Name:   IP
-    Private-Port-Name: APP_PORT_3
+    Private-Port-Name: APP_3_PORT
     Private-Port:      3003
-    Public-Port-Name:  APP_PORT_3_PROXY_PORT
+    Public-Port-Name:  APP_3_PROXY_PORT
     Options:           { "ssl_to_gear": true }
 
 #
@@ -219,25 +219,25 @@ Endpoints:
       Backend: ''
 
   - Private-IP-Name:   IP
-    Private-Port-Name: APP_TLS_PORT_1
+    Private-Port-Name: APP_TLS_1_PORT
     Private-Port:      4001
-    Public-Port-Name:  APP_TLS_PORT_1_PROXY_PORT
+    Public-Port-Name:  APP_TLS_1_PROXY_PORT
     Protocols: [tls]
     Mappings:
     - Frontend: 'TLS_PORT_6'
       Backend: ''
   - Private-IP-Name:   IP
-    Private-Port-Name: APP_TLS_PORT_2
+    Private-Port-Name: APP_TLS_2_PORT
     Private-Port:      4002
-    Public-Port-Name:  APP_TLS_PORT_2_PROXY_PORT
+    Public-Port-Name:  APP_TLS_2_PROXY_PORT
     Protocols: [tls]
     Mappings:
     - Frontend: 'TLS_PORT_7'
       Backend: ''
   - Private-IP-Name:   IP
-    Private-Port-Name: APP_TLS_PORT_3
+    Private-Port-Name: APP_TLS_3_PORT
     Private-Port:      4003
-    Public-Port-Name:  APP_TLS_PORT_3_PROXY_PORT
+    Public-Port-Name:  APP_TLS_3_PROXY_PORT
     Protocols: [tls]
     Mappings:
     - Frontend: 'TLS_PORT_8'
