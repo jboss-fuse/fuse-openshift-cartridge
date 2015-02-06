@@ -1,6 +1,6 @@
 Name: fuse-builder
 Cartridge-Short-Name: BUILDER
-Display-Name: JBoss Fuse Builder 6.1.1 for xPaaS
+Display-Name: JBoss Fuse Builder 6.2.0 for xPaaS
 Description: |
   The Fuse Builder cartridge builds Maven artifacts pushed to its git repository for JBoss Fuse and JBoss A-MQ applications and makes them available via an HTTP server.
   You must deploy at least one JBoss A-MQ or JBoss Fuse cartridge in the OpenShift Enterprise domain before you deploy this cartridge.
