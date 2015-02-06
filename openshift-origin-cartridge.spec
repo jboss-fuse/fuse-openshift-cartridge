@@ -1,10 +1,12 @@
+%global product_build_number 060
+
 %global cartridgedir %{_libexecdir}/openshift/cartridges/fuse-builder
 %global frameworkdir %{_libexecdir}/openshift/cartridges/fuse-builder
 %global github_tag openshift-enterprise-fuse-builder-rpm-6.2
 
 Name: openshift-origin-cartridge-fuse-builder
-Version: 6.2.0.redhat
-Release: 3%{?dist}
+Version: 6.2.0.redhat.%{product_build_number}
+Release: 1%{?dist}
 Summary: Fuse Builder cartridge
 Group: Development/Languages
 License: ASL 2.0
