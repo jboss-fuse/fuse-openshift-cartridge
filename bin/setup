@@ -22,7 +22,7 @@ setup_maven
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-BUILD=redhat-423
+BUILD=redhat-412
 
 case "$1" in
   -v|--version)
