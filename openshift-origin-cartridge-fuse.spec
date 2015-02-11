@@ -20,7 +20,6 @@ FUSE cartridge for openshift. (Cartridge Format V2)
 
 
 %prep
-%setup_maven
 %setup -q
 
 %build

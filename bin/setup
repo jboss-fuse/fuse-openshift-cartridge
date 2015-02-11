@@ -1,5 +1,25 @@
 #!/bin/bash -eu
 
+function setup_maven() {
+export M2_HOME="$OPENSHIFT_DATA_DIR/.m2"
+
+#
+# Create M2_HOME if the folder does not exist like the repository folder
+#
+if [ ! -d "$M2_HOME" ]; then
+	mkdir -p $M2_HOME/repository
+fi
+
+#
+# Create the settings.xml file if it does not exist
+#
+if [ ! -f "$M2_HOME/settings.xml" ] ; then
+    echo -e  "<settings>\n   <localRepository>$OPENSHIFT_DATA_DIR/.m2/repository</localRepository>\n</settings>\n" > $M2_HOME/settings.xml
+fi
+}
+
+setup_maven
+
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 BUILD=redhat-423
