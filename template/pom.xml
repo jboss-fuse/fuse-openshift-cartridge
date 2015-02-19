@@ -271,7 +271,7 @@
                   <plugin>
                       <groupId>io.fabric8</groupId>
                       <artifactId>fabric8-maven-plugin</artifactId>
-                      <version>1.1.0.CR5</version>
+                      <version>1.2.0.redhat-066</version>
                       <executions>
                           <execution>
                               <id>deploy</id>
