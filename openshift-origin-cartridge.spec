@@ -31,7 +31,7 @@ A-MQ cartridge for openshift.
 %setup -q -n fuse-openshift-cartridge-%{github_tag}
 
 %build
-unzip %SOURCE1
+unzip %SOURCE1 -x jboss-a-mq-*/extras/*
 mv jboss-a-mq-* usr
 mkdir -p patches
 
