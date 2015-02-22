@@ -30,7 +30,7 @@ Fuse cartridge for openshift.
 %setup -q -n fuse-openshift-cartridge-%{github_tag}
 
 %build
-unzip %SOURCE1
+unzip %SOURCE1 -x jboss-fuse-*/extras/*
 mv jboss-fuse-* usr
 mkdir -p patches
 
