@@ -147,7 +147,7 @@ try_restart=0
 
 if [ -d $FUSE_PATCH_DIR ]; then
   if is_running; then
-    files=$(find $FUSE_PATCH_DIR -name "*.zip")
+    files=$(find $FUSE_PATCH_DIR -name "*.zip" | sort)
     for patch in $files ; do
       if [ -d $patch ]; then
         continue
