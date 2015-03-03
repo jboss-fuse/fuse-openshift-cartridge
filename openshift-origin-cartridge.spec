@@ -6,7 +6,7 @@
 
 Name: openshift-origin-cartridge-amq
 Version: 6.1.1.redhat.%{product_build_number}
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: A-MQ cartridge
 Group: Development/Languages
 License: ASL 2.0
