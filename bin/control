@@ -15,10 +15,8 @@ function start() {
   fi
   
   # apply any patches we have in patches dir to the booted GA distro
-  ${OPENSHIFT_FUSE_DIR}/bin/upgrade
+  ${OPENSHIFT_FUSE_DIR}/bin/upgrade 0 0 0 0
 }
-
-
 
 function stop() {
     if [ -f $FUSE_PID_FILE ]; then
