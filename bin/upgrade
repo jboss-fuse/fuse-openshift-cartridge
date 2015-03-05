@@ -2,6 +2,15 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
+fuse_version="$1"
+old_cart_version="$2"
+new_cart_version="$3"
+if [ "x$4" = "x" ]; then
+  export invoked_from_install=0
+else
+  export invoked_from_install=$4
+fi
+
 FUSE_BIN_DIR=${OPENSHIFT_FUSE_DIR}/container/bin
 FUSE_PATCH_DIR=${OPENSHIFT_FUSE_DIR}/patches
 FUSE_PASSWD_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/passwd
@@ -191,16 +200,19 @@ if [ -d $FUSE_PATCH_DIR ]; then
   fi
 fi
 
-if [ "$patch_applied" -eq 1 ]; then
-  if ! is_fabric_provisioned; then
-    client_message "${OPENSHIFT_APP_NAME} fabric needs to be restarted to complete installation of patch."
-    restart
-    exit 0
+# we don't need to restart if this is a first time install
+if [ "$invoked_from_install" -eq 0 ]; then
+  if [ "$patch_applied" -eq 1 ]; then
+    if ! is_fabric_provisioned; then
+      client_message "${OPENSHIFT_APP_NAME} fabric needs to be restarted to complete installation of patch."
+      restart
+      exit 0
+    fi
   fi
-fi
 
-if [ "$try_restart" -eq 1 ]; then
-    client_message "${OPENSHIFT_APP_NAME} fabric needs to be restarted to complete provisioning."
-    restart
-    exit 0
+  if [ "$try_restart" -eq 1 ]; then
+      client_message "${OPENSHIFT_APP_NAME} fabric needs to be restarted to complete provisioning."
+      restart
+      exit 0
+  fi
 fi
