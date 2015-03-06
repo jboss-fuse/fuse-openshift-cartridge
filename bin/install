@@ -181,7 +181,7 @@ echo "zookeeper.password=${OPENSHIFT_FUSE_PASSWORD}" >> $FUSE_SYSPROPS_FILE
 # Trust even self signed certs since OS gives us a self signed cert.
 echo "javax.net.ssl.trustAll=true" >> $FUSE_SYSPROPS_FILE
 # Enable the openshift port mapper
-echo "org.fusesource.common.util.PublicPortMapper=openshift" >> $FUSE_SYSPROPS_FILE
+echo "io.fabric8.common.util.PublicPortMapper=openshift" >> $FUSE_SYSPROPS_FILE
 
 FUSE_CERT=""
 
