@@ -121,6 +121,7 @@ org.osgi.service.http.port=<%= ENV['OPENSHIFT_FUSE_HTTP_PORT'] %>
 org.ops4j.pax.web.listening.addresses=<%= ENV['OPENSHIFT_FUSE_IP'] %>
 fabric.environment=openshift
 
+activemq.idgenerator.port=<%= ENV['OPENSHIFT_FUSE_OPENWIRE_PORT'] %>
 openwire.port=<%= ENV['OPENSHIFT_FUSE_OPENWIRE_PORT'] %>
 mqtt.port=<%= ENV['OPENSHIFT_FUSE_MQTT_PORT'] %>
 amqp.port=<%= ENV['OPENSHIFT_FUSE_AMQP_PORT'] %>
