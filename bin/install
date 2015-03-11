@@ -123,6 +123,8 @@ rm -rf gateway
 rm -rf hadoop
 rm -rf containers/jbpm
 rm -rf openshift/aerogear/pushserver.profile
+# Use only AMQ branding
+sed -i 's/feature.hawtio-redhat-fuse-branding/#feature.hawtio-redhat-fuse-branding/' hawtio.profile/io.fabric8.agent.properties
 
 cd $OPENSHIFT_FUSE_DIR
 
