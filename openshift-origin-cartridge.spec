@@ -1,4 +1,4 @@
-%global product_build_number 090
+%global product_build_number 091
 
 %global cartridgedir %{_libexecdir}/openshift/cartridges/fuse-builder
 %global frameworkdir %{_libexecdir}/openshift/cartridges/fuse-builder
