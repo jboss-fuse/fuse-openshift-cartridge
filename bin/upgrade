@@ -2,13 +2,11 @@
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
-fuse_version="$1"
-old_cart_version="$2"
-new_cart_version="$3"
-if [ "x$4" = "x" ]; then
-  export invoked_from_install=0
+if [ -f ${OPENSHIFT_FUSE_DIR}/upgrade_after_install ]; then
+  rm ${OPENSHIFT_FUSE_DIR}/upgrade_after_install
+  export invoked_from_install=1
 else
-  export invoked_from_install=$4
+  export invoked_from_install=0
 fi
 
 FUSE_BIN_DIR=${OPENSHIFT_FUSE_DIR}/container/bin
