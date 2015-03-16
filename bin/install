@@ -290,6 +290,8 @@ fi
 cart_props "username=admin"
 cart_props "password=${OPENSHIFT_FUSE_PASSWORD}"
 
+touch ${OPENSHIFT_FUSE_DIR}/upgrade_after_install
+
 ${FUSE_BIN_DIR}/start
 if $join; then
     wait_for_start
@@ -315,6 +317,3 @@ if $join; then
 else
     wait_for_start 'wait-for-fabric'
 fi
-
-# apply any patches we have in patches dir to the booted GA distro
-${OPENSHIFT_FUSE_DIR}/bin/upgrade 0 0 0 1
