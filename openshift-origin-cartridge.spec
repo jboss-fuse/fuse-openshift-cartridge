@@ -53,6 +53,7 @@ for patch in $files ; do
   if [[ $patch == *.zip ]]; then
     unzip -u -q -d %{cartridgedir} $patch repository/*
     cp -r %{cartridgedir}/repository/* %{cartridgedir}/usr/system/
+    chmod -R 755 %{cartridgedir}/usr/system
     rm -rf %{cartridgedir}/repository
   fi
 done
