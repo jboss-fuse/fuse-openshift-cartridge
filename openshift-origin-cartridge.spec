@@ -45,6 +45,17 @@ rm -rf %{buildroot}
 
 
 %post
+files=$(find %{cartridgedir}/patches -name "*.zip" | sort)
+for patch in $files ; do
+  if [ -d $patch ]; then
+    continue;
+  fi
+  if [[ $patch == *.zip ]]; then
+    unzip -u -q -d %{cartridgedir} $patch repository/*
+    cp -r %{cartridgedir}/repository/* %{cartridgedir}/usr/system/
+    rm -rf %{cartridgedir}/repository
+  fi
+done
 
 %files
 %defattr(-,root,root,-)
