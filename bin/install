@@ -9,54 +9,6 @@ FUSE_USRPROPS_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/users.properties
 FUSE_SYSPROPS_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/system.properties
 FUSE_BRANDING_FILE=${OPENSHIFT_FUSE_DIR}/container/etc/branding.properties
 
-function wait_for_start() {
-  for i in {1..20};
-     do
-       if [ ! -f $FUSE_PID_FILE ]; then
-         sleep 1
-       else
-         break
-       fi
-     done
-   if [ -f $FUSE_PID_FILE ]; then
-      for j in {1..20};
-         do
-           PID=`cat $FUSE_PID_FILE | grep "item.0.pid" | awk -F "=" '{print $2}'`
-           if [ "$PID" = "" ]; then
-             sleep 1
-           else
-            break
-           fi
-     done
-     if ps -p $PID > /dev/null; then
-       if [ "$1" == "wait-for-fabric" ] ; then
-         retries=300
-         fabric_loaded=0
-         while [ $retries -gt 1 ]; do
-            result=`curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/CurrentContainerName || :`
-            ( echo $result | grep '"status":200' > /dev/null ) && fabric_loaded=1 && break
-            let retries=$retries-1
-            sleep 1
-         done         
-         if [ $fabric_loaded -eq 1 ]; then
-           client_result ""
-         else
-           client_error "Command Failed: Could not reach ${OPENSHIFT_APP_NAME} console."
-           exit 1
-         fi
-       else
-         client_result ""
-       fi
-     else
-       client_error "Command Failed: ${OPENSHIFT_APP_NAME} ($PID) is not running"
-       exit 1
-     fi
-   else
-    client_error "Command Failed: Could not find instance.properties"
-    exit 1
-   fi
-}
-
 function replace_property_value {
   sed "s/$1.*=.*/$1 = $2/g" $3 > $3.tmp
   rm $3
@@ -264,35 +216,19 @@ if [ ! -z "${FUSE_CERT_FILE:-}" ]; then
   client_result "   SSL Certificate URL: ${OPENSHIFT_FUSE_CONSOLE_URL}/hawtio/index.html#/wiki/branch/1.0/view/fabric/profiles/default.profile/keystore.cert"
 fi
 
-if ! $join; then
-client_result ""
-client_result "   The management console will be available shortly at: ${OPENSHIFT_FUSE_CONSOLE_URL}"
-client_result ""
+if $join; then
+  touch ${OPENSHIFT_FUSE_DIR}/execute_join
+  client_result ""
+  client_result "WARNING: Creating fabric containers directly from"
+  client_result "         openshift is supported in a limited way"
+  client_result "         as such containers can not be fully managed"
+  client_result "         by fabric."
+else
+  client_result ""
+  client_result "   The management console will be available shortly at: ${OPENSHIFT_FUSE_CONSOLE_URL}"
+  client_result ""
 fi
 
 cart_props "username=admin"
 cart_props "password=${OPENSHIFT_FUSE_PASSWORD}"
-
 touch ${OPENSHIFT_FUSE_DIR}/upgrade_after_install
-
-${FUSE_BIN_DIR}/start
-if $join; then
-    wait_for_start
-    retries=40
-    while [ $retries -gt 1 ]; do
-      if ${FUSE_BIN_DIR}/client -r 5 -d 5 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"; then
-        break;
-      fi
-      let retries=$retries-1
-      sleep 5
-    done
-    ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
-
-    client_result ""
-    client_result "WARNING: Creating fabric containers directly from"
-    client_result "         openshift is supported in a limited way"
-    client_result "         as such containers can not be fully managed"
-    client_result "         by fabric."
-else
-    wait_for_start 'wait-for-fabric'
-fi

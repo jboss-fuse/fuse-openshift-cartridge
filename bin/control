@@ -10,7 +10,23 @@ function start() {
     client_message "${OPENSHIFT_APP_NAME} already started"
   else  
     ${FUSE_BIN_DIR}/start
-    wait_for_start    
+
+    if [ -f ${OPENSHIFT_FUSE_DIR}/execute_join ]; then
+      rm ${OPENSHIFT_FUSE_DIR}/execute_join
+      wait_for_start
+      retries=40
+      while [ $retries -gt 1 ]; do
+        if ${FUSE_BIN_DIR}/client -r 5 -d 5 -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "wait-for-service io.fabric8.boot.commands.service.JoinAvailable"; then
+           break;
+        fi
+        let retries=$retries-1
+        sleep 5
+      done
+      ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
+
+    else
+      wait_for_start 'wait-for-fabric'
+    fi
     client_message "Started application"
   fi
   
@@ -126,24 +142,29 @@ function wait_for_start() {
            fi
      done
      if ps -p $PID > /dev/null; then
-       retries=300
-       fabric_loaded=0
-       while [ $retries -gt 0 ]; do
-          curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/CurrentContainerName | grep '"status":200' > /dev/null
-          [ $? -eq 0 ] && fabric_loaded=1 && break
-          let retries=$retries-1
-          sleep 1
-       done
-       if [ $fabric_loaded -eq 1 ]; then
-         client_result "${OPENSHIFT_APP_NAME} ($PID) is started successfully"
-       else
-         client_error "Command Failed: Could not reach ${OPENSHIFT_APP_NAME} console."
+       if [ "$1" == "wait-for-fabric" ] ; then
+         retries=300
+         fabric_loaded=0
+         while [ $retries -gt 1 ]; do
+            result=`curl -s http://admin:${OPENSHIFT_FUSE_PASSWORD}@$OPENSHIFT_FUSE_IP:8080/jolokia/read/io.fabric8:type=Fabric/CurrentContainerName || :`
+            ( echo $result | grep '"status":200' > /dev/null ) && fabric_loaded=1 && break
+            let retries=$retries-1
+            sleep 1
+         done
+         if [ $fabric_loaded -eq 1 ]; then
+           client_result ""
+         else
+           client_error "Command Failed: Could not reach ${OPENSHIFT_APP_NAME} console."
+           exit 1
+         fi
        fi
      else
        client_error "Command Failed: ${OPENSHIFT_APP_NAME} ($PID) is not running"
+       exit 1
      fi
    else
     client_error "Command Failed: Could not find instance.properties"
+    exit 1
    fi
 }
 
