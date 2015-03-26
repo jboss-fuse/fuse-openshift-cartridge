@@ -70,6 +70,14 @@ karaf.processes=${karaf.home}/processes
 # quartz should not call home by default
 org.quartz.scheduler.skipUpdateCheck=true
 
+#Runtime Properties Configuration
+environment.prefix=FABRIC8_
+runtime.id=${karaf.name}
+runtime.home=${karaf.home}
+runtime.conf=${karaf.etc}
+runtime.data=${karaf.data}
+zookeeper.sasl.client=false
+
 # Allow usage of ${servicemix.home} as an alias for ${karaf.home}
 #
 servicemix.home=${karaf.home}
