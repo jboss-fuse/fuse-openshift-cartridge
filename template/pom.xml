@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.jboss.quickstarts.fuse</groupId>
         <artifactId>jboss-quickstarts-fuse-parent</artifactId>
-        <version>6.2.0.redhat-101</version>
+        <version>6.2.0.redhat-102</version>
     </parent>
 
     <!--
@@ -116,7 +116,7 @@
         <version.maven-surefire-plugin>2.15</version.maven-surefire-plugin>
         <version.maven-bundle-plugin>2.3.4</version.maven-bundle-plugin>
         <!-- the version of the JBoss Fuse BOM, defining all the dependency versions -->
-        <jboss.fuse.bom.version>6.2.0.redhat-101</jboss.fuse.bom.version>
+        <jboss.fuse.bom.version>6.2.0.redhat-102</jboss.fuse.bom.version>
         <fabric.version>1.2.0.redhat-066</fabric.version>
     </properties>
 
