@@ -190,7 +190,7 @@ else
 #Profile:mq-broker-default.${OPENSHIFT_APP_NAME}
 attribute.parents = mq-base
 EOF
-    cat > "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile/io.fabric8.mq.fabric.server-bar.properties" <<EOF
+    cat > "$OPENSHIFT_FUSE_DIR/container/fabric/import/fabric/profiles/mq/broker/default.${OPENSHIFT_APP_NAME}.profile/io.fabric8.mq.fabric.server-${OPENSHIFT_APP_NAME}.properties" <<EOF
 standby.pool = default
 connectors = openwire
 broker-name = ${OPENSHIFT_APP_NAME}
