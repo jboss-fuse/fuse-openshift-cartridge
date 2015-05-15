@@ -146,7 +146,8 @@ FUSE_CERT=""
 join=false
 if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
     client_result "Using provided url from cartridge"
-    echo "zookeeper.url=$OPENSHIFT_FUSE_ZOOKEEPER_URL" >> $FUSE_SYSPROPS_FILE
+    # zookeeper URL will be set as part of join
+    join=true
 
     # are we the first gear created against an external fuse zk server.
     if [ -z "${OPENSHIFT_FUSE_DOMAIN_DNS:-}" ]; then 
@@ -162,7 +163,6 @@ if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
       add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
       add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_PASSWORD=${OPENSHIFT_FUSE_PASSWORD}"    
     fi 
-    join=true
 elif  [ ! -z "${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL:-}" ]; then
     client_result "Using provided url from domain"
     export OPENSHIFT_FUSE_ZOOKEEPER_URL=${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL}
@@ -209,11 +209,6 @@ EOF
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_HTTP_PORT=${OPENSHIFT_FUSE_DOMAIN_HTTP_PORT}"
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
     add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_PASSWORD=${OPENSHIFT_FUSE_PASSWORD}"    
-fi
-
-if  [ ! -z "${OPENSHIFT_FUSE_CREATED_FROM_FABRIC:-}" ]; then
-    client_result "App creation initiated from fabric so will join fabric automatically"
-    join=false
 fi
 
 OPENSHIFT_FUSE_CONSOLE_URL="https://${OPENSHIFT_FUSE_DOMAIN_DNS}"
