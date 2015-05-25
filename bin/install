@@ -306,7 +306,7 @@ if $join; then
     ${FUSE_BIN_DIR}/client -h ${OPENSHIFT_FUSE_IP} -a ${OPENSHIFT_FUSE_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:join -f -b ${OPENSHIFT_FUSE_IP} --zookeeper-password ${OPENSHIFT_FUSE_PASSWORD} ${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
 
     # Create a broker profile on using the ZK server since it should be up and running.
-    ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_DNS} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:mq-create ${OPENSHIFT_APP_NAME}"    
+    ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_DNS} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:mq-create -D bind.address=${OPENSHIFT_FUSE_IP} ${OPENSHIFT_APP_NAME}"    
     ${FUSE_BIN_DIR}/client -r 10 -d 10 -h ${OPENSHIFT_FUSE_DOMAIN_DNS} -a ${OPENSHIFT_FUSE_DOMAIN_SSH_PORT} -u admin -p ${OPENSHIFT_FUSE_PASSWORD} "fabric:container-add-profile ${OPENSHIFT_APP_NAME} mq-broker-default.${OPENSHIFT_APP_NAME}"
 
     client_result ""
