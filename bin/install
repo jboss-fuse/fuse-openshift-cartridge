@@ -101,6 +101,12 @@ cat container/etc/org.apache.karaf.features.cfg | sed 's/featuresBoot.*/features
 cp container/etc/org.apache.karaf.features.cfg.mod container/etc/org.apache.karaf.features.cfg || :
 rm container/etc/org.apache.karaf.features.cfg.mod || :
 
+if ping ${OPENSHIFT_FUSE_DOMAIN_DNS} > /dev/null; then
+  domain_url_check=0
+else
+  domain_url_check=1
+fi
+
 # Retrieve password
 if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD:-}" ]; then
     OPENSHIFT_FUSE_PASSWORD="${OPENSHIFT_FUSE_ZOOKEEPER_PASSWORD}"
@@ -114,7 +120,7 @@ if [ ! -z "${OPENSHIFT_FUSE_PASSWORD:-}" ]; then
       client_error "Command Failed: provided password must be at least 6 characters"
       exit 1
     fi
-elif [ ! -z "${OPENSHIFT_FUSE_DOMAIN_PASSWORD:-}" ]; then
+elif [ [ ! -z "${OPENSHIFT_FUSE_DOMAIN_PASSWORD:-}" ] && [ ${domain_url_check} -eq 0 ] ]; then
     client_result "Using provided password from domain"
     export OPENSHIFT_FUSE_PASSWORD=${OPENSHIFT_FUSE_DOMAIN_PASSWORD}
     set_env_var OPENSHIFT_FUSE_PASSWORD "${OPENSHIFT_FUSE_PASSWORD}" env
@@ -159,7 +165,7 @@ if [ ! -z "${OPENSHIFT_FUSE_ZOOKEEPER_URL:-}" ]; then
       add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL=${OPENSHIFT_FUSE_ZOOKEEPER_URL}"
       add_domain_env_var "OPENSHIFT_FUSE_DOMAIN_PASSWORD=${OPENSHIFT_FUSE_PASSWORD}"    
     fi 
-elif  [ ! -z "${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL:-}" ]; then
+elif  [ ! -z "${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL:-}" ] && [ ${domain_url_check} -eq 0 ] ]; then
     client_result "Using provided url from domain"
     export OPENSHIFT_FUSE_ZOOKEEPER_URL=${OPENSHIFT_FUSE_DOMAIN_ZOOKEEPER_URL}
     set_env_var OPENSHIFT_FUSE_ZOOKEEPER_URL "${OPENSHIFT_FUSE_ZOOKEEPER_URL}" env
