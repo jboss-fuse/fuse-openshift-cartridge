@@ -19,8 +19,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.quickstarts.fuse</groupId>
-        <artifactId>jboss-quickstarts-fuse-parent</artifactId>
-        <version>6.2.0.redhat-125</version>
+        <artifactId>quickstarts-parent</artifactId>
+        <version>6.2.0.redhat-124</version>
     </parent>
 
     <!--
@@ -111,13 +111,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <skipTests>true</skipTests>
         <!-- maven-compiler-plugin -->
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
         <version.maven-surefire-plugin>2.15</version.maven-surefire-plugin>
         <version.maven-bundle-plugin>2.3.4</version.maven-bundle-plugin>
         <!-- the version of the JBoss Fuse BOM, defining all the dependency versions -->
-        <jboss.fuse.bom.version>6.2.0.redhat-125</jboss.fuse.bom.version>
-        <fabric.version>1.2.0.redhat-066</fabric.version>
+        <jboss.fuse.bom.version>6.2.0.redhat-124</jboss.fuse.bom.version>
+        <fabric.version>1.2.0.redhat-124</fabric.version>
     </properties>
 
     <dependencyManagement>
