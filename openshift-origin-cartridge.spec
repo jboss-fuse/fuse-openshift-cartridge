@@ -76,6 +76,9 @@ done
 
 
 %changelog
+* Wed Jun 10 2015 Jon Anstey <janstey@gmail.com> 6.2.0.redhat.126-1
+- Updates for the JBoss Fuse 6.2.0 release
+
 * Wed Jul 09 2014 Jon Anstey <janstey@gmail.com> 6.1.0.redhat.385-2
 - https://bugzilla.redhat.com/show_bug.cgi?id=1109058
 - https://bugzilla.redhat.com/show_bug.cgi?id=1109117
