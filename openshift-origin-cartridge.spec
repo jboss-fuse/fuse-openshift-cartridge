@@ -2,7 +2,7 @@
 
 %global cartridgedir %{_libexecdir}/openshift/cartridges/fuse-builder
 %global frameworkdir %{_libexecdir}/openshift/cartridges/fuse-builder
-%global github_tag openshift-enterprise-fuse-builder-rpm-6.2
+%global github_tag openshift-enterprise-fuse-builder-rpm-6.2.0
 
 Name: openshift-origin-cartridge-fuse-builder
 Version: 6.2.0.redhat.%{product_build_number}
