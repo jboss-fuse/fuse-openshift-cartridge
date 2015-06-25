@@ -2,7 +2,7 @@
 
 %global cartridgedir %{_libexecdir}/openshift/cartridges/amq
 %global frameworkdir %{_libexecdir}/openshift/cartridges/amq
-%global github_tag openshift-enterprise-amq-rpm-6.2
+%global github_tag openshift-enterprise-amq-rpm-6.2.0
 
 Name: openshift-origin-cartridge-amq
 Version: 6.2.0.redhat.%{product_build_number}
