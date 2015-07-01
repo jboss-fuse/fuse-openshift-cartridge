@@ -1,6 +1,6 @@
 Name: fuse
 Cartridge-Short-Name: FUSE
-Display-Name: JBoss Fuse 6.2.0 for xPaaS
+Display-Name: JBoss Fuse 6.2.1 for xPaaS
 Description: "Runs a JBoss Fuse container on OpenShift."
 Version: '6.2.1'
 License: "ASL 2.0"
