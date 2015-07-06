@@ -1,4 +1,4 @@
-%global product_build_number 011
+%global product_build_number 012
 
 %global cartridgedir %{_libexecdir}/openshift/cartridges/amq
 %global frameworkdir %{_libexecdir}/openshift/cartridges/amq
