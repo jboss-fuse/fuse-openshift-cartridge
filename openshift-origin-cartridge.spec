@@ -4,7 +4,7 @@
 %global frameworkdir %{_libexecdir}/openshift/cartridges/amq
 %global github_tag openshift-enterprise-amq-rpm-6.2.0
 
-Name: openshift-origin-cartridge-amq
+Name: openshift-origin-cartridge-amq62
 Version: 6.2.0.redhat.%{product_build_number}
 Release: 1%{?dist}
 Summary: A-MQ cartridge
